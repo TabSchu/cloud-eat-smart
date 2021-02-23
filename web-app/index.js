@@ -117,19 +117,19 @@ const producer = kafka.producer()
 // End
 
 // Send tracking message to Kafka
-async function sendTrackingMessage(data) {
-	//Ensure the producer is connected
-	await producer.connect()
+// async function sendTrackingMessage(data) {
+// 	//Ensure the producer is connected
+// 	await producer.connect()
 
-	//Send message
-	await producer.send({
-		topic: options.kafkaTopicTracking,
-		messages: [
-			{ value: JSON.stringify(data) }
-		]
-	})
-}
-// End
+// 	//Send message
+// 	await producer.send({
+// 		topic: options.kafkaTopicTracking,
+// 		messages: [
+// 			{ value: JSON.stringify(data) }
+// 		]
+// 	})
+// }
+// // End
 
 // Send tracking message to Kafka
 async function sendStudentMessage(data) {
@@ -220,33 +220,51 @@ async function getMissions() {
 	}
 }
 
+
+
+
+// // Get popular missions (from db only)
+// async function getPopular(maxCount) {
+// 	const query = "SELECT mission, count FROM popular ORDER BY count DESC LIMIT ?"
+// 	return (await executeQuery(query, [maxCount]))
+// 		.fetchAll()
+// 		.map(row => ({ mission: row[0], count: row[1] }))
+// }
+
 // Get popular missions (from db only)
-async function getPopular(maxCount) {
-	const query = "SELECT mission, count FROM popular ORDER BY count DESC LIMIT ?"
+async function getSmartCuisine(maxCount) {
+	const query = "SELECT cuisine, avg_gpa FROM smart_cuisine ORDER BY avg_gpa DESC LIMIT ?"
 	return (await executeQuery(query, [maxCount]))
 		.fetchAll()
-		.map(row => ({ mission: row[0], count: row[1] }))
+		.map(row => { console.log(row); ({ cuisine: row[0], avg_gpa: row[1] }); })
 }
 
 // Return HTML for start page
 app.get("/", (req, res) => {
 	const topX = 10;
-	Promise.all([getMissions(), getPopular(topX)]).then(values => {
+	Promise.all([getMissions(), getSmartCuisine(topX)]).then(values => {  //, getPopular(topX)
 		const missions = values[0]
-		const popular = values[1]
+		//const popular = values[1]
+		const smartCuisine = values[1]
 
 		const missionsHtml = missions.result
 			.map(m => `<a href='missions/${m}'>${m}</a>`)
 			.join(", ")
 
-		const popularHtml = popular
-			.map(pop => `<li> <a href='missions/${pop.mission}'>${pop.mission}</a> (${pop.count} views) </li>`)
+		// const popularHtml = popular
+		// 	.map(pop => `<li> <a href='missions/${pop.mission}'>${pop.mission}</a> (${pop.count} views) </li>`)
+		// 	.join("\n")
+		//			<ol style="margin-left: 2em;"> ${popularHtml} </ol> 
+
+		const cuisineHtml = smartCuisine
+			.map(pop => `<li> ${pop.cuisine}(${pop.avg_gpa} gpa) </li>`)
 			.join("\n")
+					
 
 		const html = `
 			<h1>Top ${topX} Missions</h1>		
 			<p>
-				<ol style="margin-left: 2em;"> ${popularHtml} </ol> 
+			<ol style="margin-left: 2em;"> ${cuisineHtml} </ol> 
 			</p>
 			<h1>All Missions</h1>
 			<p> ${missionsHtml} </p>
@@ -287,12 +305,12 @@ app.get("/missions/:mission", (req, res) => {
 	let mission = req.params["mission"]
 	let student = {gpa : 2.21, fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
 
-	// Send the tracking message to Kafka
-	sendTrackingMessage({
-		mission,
-		timestamp: Math.floor(new Date() / 1000)
-	}).then(() => console.log("Sent to kafka"))
-		.catch(e => console.log("Error sending to kafka", e))
+	// // Send the tracking message to Kafka
+	// sendTrackingMessage({
+	// 	mission,
+	// 	timestamp: Math.floor(new Date() / 1000)
+	// }).then(() => console.log("Sent to kafka"))
+	// 	.catch(e => console.log("Error sending to kafka", e))
 
 	// Send the tracking message to Kafka
 	sendStudentMessage(student).then(() => console.log("Sent Student to kafka"))

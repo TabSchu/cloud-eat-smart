@@ -18,7 +18,7 @@ data:
 
     CREATE TABLE `smart_cuisine` (
       `cuisine` VARCHAR(20) NOT NULL,
-      `avg_gpa` DOUBLE(10,2),
+      `avg_gpa` DOUBLE,
        PRIMARY KEY (`cuisine`)
     );
 

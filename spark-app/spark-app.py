@@ -28,9 +28,9 @@ kafkaMessages = spark \
     .load()
 
 # Define schema of tracking data
-trackingMessageSchema = StructType() \
-    .add("mission", StringType()) \
-    .add("timestamp", IntegerType())
+# trackingMessageSchema = StructType() \
+#     .add("mission", StringType()) \
+#     .add("timestamp", IntegerType())
 
 trackingStudentSchema = StructType() \
     .add("gpa", DoubleType()) \
@@ -38,25 +38,25 @@ trackingStudentSchema = StructType() \
     .add("timestamp", IntegerType())
 
 
-# Example Part 3
-# Convert value: binary -> JSON -> fields + parsed timestamp
-trackingMessages = kafkaMessages.select(
-    # Extract 'value' from Kafka message (i.e., the tracking data)
-    from_json(
-        column("value").cast("string"),
-        trackingMessageSchema
-    ).alias("json")
-).select(
-    # Convert Unix timestamp to TimestampType
-    from_unixtime(column('json.timestamp'))
-    .cast(TimestampType())
-    .alias("parsed_timestamp"),
+# # Example Part 3
+# # Convert value: binary -> JSON -> fields + parsed timestamp
+# trackingMessages = kafkaMessages.select(
+#     # Extract 'value' from Kafka message (i.e., the tracking data)
+#     from_json(
+#         column("value").cast("string"),
+#         trackingMessageSchema
+#     ).alias("json")
+# ).select(
+#     # Convert Unix timestamp to TimestampType
+#     from_unixtime(column('json.timestamp'))
+#     .cast(TimestampType())
+#     .alias("parsed_timestamp"),
 
-    # Select all JSON fields
-    column("json.*")
-) \
-    .withColumnRenamed('json.mission', 'mission') \
-    .withWatermark("parsed_timestamp", windowDuration)
+#     # Select all JSON fields
+#     column("json.*")
+# ) \
+#     .withColumnRenamed('json.mission', 'mission') \
+#     .withWatermark("parsed_timestamp", windowDuration)
 
 
 
@@ -82,16 +82,16 @@ trackingStudentMessages = kafkaMessages.select(
     .withWatermark("parsed_timestamp", windowDuration)
 
 
-# Example Part 4
-# Compute most popular slides
-popular = trackingMessages.groupBy(
-    window(
-        column("parsed_timestamp"),
-        windowDuration,
-        slidingDuration
-    ),
-    column("mission")
-).count().withColumnRenamed('count', 'views')
+# # Example Part 4
+# # Compute most popular slides
+# popular = trackingMessages.groupBy(
+#     window(
+#         column("parsed_timestamp"),
+#         windowDuration,
+#         slidingDuration
+#     ),
+#     column("mission")
+# ).count().withColumnRenamed('count', 'views')
 
 # Example Part 4.2
 # Compute most popular slides
@@ -102,17 +102,17 @@ smart_cuisine = trackingStudentMessages.groupBy(
         slidingDuration
     ),
     column("fav_cuisine")
-).avg('gpa').withColumnRenamed('gpa', 'avg_gpa')
+).avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
 
-# Example Part 5
-# Start running the query; print running counts to the console
-consoleDump = popular \
-    .writeStream \
-    .trigger(processingTime=slidingDuration) \
-    .outputMode("update") \
-    .format("console") \
-    .option("truncate", "false") \
-    .start()
+# # Example Part 5
+# # Start running the query; print running counts to the console
+# consoleDump = popular \
+#     .writeStream \
+#     .trigger(processingTime=slidingDuration) \
+#     .outputMode("update") \
+#     .format("console") \
+#     .option("truncate", "false") \
+#     .start()
 
 # Example Part 5.2
 # Start running the query; print running counts to the console
@@ -125,25 +125,25 @@ consoleStudentDump = smart_cuisine \
     .start()
 
 
-# Example Part 6
-def saveToDatabase(batchDataframe, batchId):
-    # Define function to save a dataframe to mysql
-    def save_to_db(iterator):
-        # Connect to database and use schema
-        session = mysqlx.get_session(dbOptions)
-        session.sql("USE popular").execute()
+# # Example Part 6
+# def saveToDatabase(batchDataframe, batchId):
+#     # Define function to save a dataframe to mysql
+#     def save_to_db(iterator):
+#         # Connect to database and use schema
+#         session = mysqlx.get_session(dbOptions)
+#         session.sql("USE popular").execute()
 
-        for row in iterator:
-            # Run upsert (insert or update existing)
-            sql = session.sql("INSERT INTO popular "
-                              "(mission, count) VALUES (?, ?) "
-                              "ON DUPLICATE KEY UPDATE count=?")
-            sql.bind(row.mission, row.views, row.views).execute()
+#         for row in iterator:
+#             # Run upsert (insert or update existing)
+#             sql = session.sql("INSERT INTO popular "
+#                               "(mission, count) VALUES (?, ?) "
+#                               "ON DUPLICATE KEY UPDATE count=?")
+#             sql.bind(row.mission, row.views, row.views).execute()
 
-        session.close()
+#         session.close()
 
-    # Perform batch UPSERTS per data partition
-    batchDataframe.foreachPartition(save_to_db)
+#     # Perform batch UPSERTS per data partition
+#     batchDataframe.foreachPartition(save_to_db)
 
 # Example Part 6.2
 def saveStudentToDatabase(batchDataframe, batchId):
@@ -166,13 +166,15 @@ def saveStudentToDatabase(batchDataframe, batchId):
     batchDataframe.foreachPartition(save_to_db)
 
 # Example Part 7
-
+# test
 
 # dbInsertStream = popular.writeStream \
 #     .trigger(processingTime=slidingDuration) \
 #     .outputMode("update") \
 #     .foreachBatch(saveToDatabase) \
 #     .start()
+
+# test
 
 dbStudentInsertStream = smart_cuisine.writeStream \
     .trigger(processingTime=slidingDuration) \
