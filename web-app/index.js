@@ -131,6 +131,22 @@ async function sendTrackingMessage(data) {
 }
 // End
 
+// Send tracking message to Kafka
+async function sendStudentMessage(data) {
+	//Ensure the producer is connected
+	await producer.connect()
+
+	//Send message
+	await producer.send({
+		topic: options.kafkaTopicTracking,
+		messages: [
+			{ value: JSON.stringify(data) }
+		]
+	})
+}
+// End
+
+
 // -------------------------------------------------------
 // HTML helper to send a response to the client
 // -------------------------------------------------------
@@ -157,6 +173,7 @@ function sendResponse(res, html, cachedResult) {
 		</head>
 		<body>
 			<h1>Big Data Use Case Demo</h1>
+			<h1>Hello World!</h1>
 			<p>
 				<a href="javascript: fetchRandomMissions();">Randomly fetch some missions</a>
 				<span id="out"></span>
@@ -268,6 +285,7 @@ async function getMission(mission) {
 
 app.get("/missions/:mission", (req, res) => {
 	let mission = req.params["mission"]
+	let student = {gpa : 2.21, fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
 
 	// Send the tracking message to Kafka
 	sendTrackingMessage({
@@ -275,6 +293,10 @@ app.get("/missions/:mission", (req, res) => {
 		timestamp: Math.floor(new Date() / 1000)
 	}).then(() => console.log("Sent to kafka"))
 		.catch(e => console.log("Error sending to kafka", e))
+
+	// Send the tracking message to Kafka
+	sendStudentMessage(student).then(() => console.log("Sent Student to kafka"))
+		.catch(e => console.log("Student Error sending to kafka", e))
 
 	// Send reply to browser
 	getMission(mission).then(data => {
@@ -286,6 +308,8 @@ app.get("/missions/:mission", (req, res) => {
 		sendResponse(res, `<h1>Error</h1><p>${err}</p>`, false)
 	})
 });
+
+
 
 // -------------------------------------------------------
 // Main method

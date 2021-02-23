@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
-from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType
+from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType, DoubleType
 import mysqlx
 
 dbOptions = {"host": "my-app-mysql-service", 'port': 33060, "user": "root", "password": "mysecretpw"}
@@ -32,6 +32,12 @@ trackingMessageSchema = StructType() \
     .add("mission", StringType()) \
     .add("timestamp", IntegerType())
 
+trackingStudentSchema = StructType() \
+    .add("gpa", DoubleType()) \
+    .add("fav_cuisine", StringType()) \
+    .add("timestamp", IntegerType())
+
+
 # Example Part 3
 # Convert value: binary -> JSON -> fields + parsed timestamp
 trackingMessages = kafkaMessages.select(
@@ -52,6 +58,30 @@ trackingMessages = kafkaMessages.select(
     .withColumnRenamed('json.mission', 'mission') \
     .withWatermark("parsed_timestamp", windowDuration)
 
+
+
+# Example Part 3.2
+# Convert value: binary -> JSON -> fields + parsed timestamp
+trackingStudentMessages = kafkaMessages.select(
+    # Extract 'value' from Kafka message (i.e., the tracking data)
+    from_json(
+        column("value").cast("string"),
+        trackingStudentSchema
+    ).alias("json")
+).select(
+     # Convert Unix timestamp to TimestampType
+    from_unixtime(column('json.timestamp'))
+    .cast(TimestampType())
+    .alias("parsed_timestamp"),
+
+    # Select all JSON fields
+    column("json.*")
+) \
+    .withColumnRenamed('json.gpa', 'gpa') \
+    .withColumnRenamed('json.fav_cuisine', 'fav_cuisine') \
+    .withWatermark("parsed_timestamp", windowDuration)
+
+
 # Example Part 4
 # Compute most popular slides
 popular = trackingMessages.groupBy(
@@ -63,6 +93,17 @@ popular = trackingMessages.groupBy(
     column("mission")
 ).count().withColumnRenamed('count', 'views')
 
+# Example Part 4.2
+# Compute most popular slides
+smart_cuisine = trackingStudentMessages.groupBy(
+    window(
+        column("parsed_timestamp"),
+        windowDuration,
+        slidingDuration
+    ),
+    column("fav_cuisine")
+).avg('gpa').withColumnRenamed('gpa', 'avg_gpa')
+
 # Example Part 5
 # Start running the query; print running counts to the console
 consoleDump = popular \
@@ -73,9 +114,18 @@ consoleDump = popular \
     .option("truncate", "false") \
     .start()
 
+# Example Part 5.2
+# Start running the query; print running counts to the console
+consoleStudentDump = smart_cuisine \
+    .writeStream \
+    .trigger(processingTime=slidingDuration) \
+    .outputMode("update") \
+    .format("console") \
+    .option("truncate", "false") \
+    .start()
+
+
 # Example Part 6
-
-
 def saveToDatabase(batchDataframe, batchId):
     # Define function to save a dataframe to mysql
     def save_to_db(iterator):
@@ -95,13 +145,39 @@ def saveToDatabase(batchDataframe, batchId):
     # Perform batch UPSERTS per data partition
     batchDataframe.foreachPartition(save_to_db)
 
+# Example Part 6.2
+def saveStudentToDatabase(batchDataframe, batchId):
+    # Define function to save a dataframe to mysql
+    def save_to_db(iterator):
+        # Connect to database and use schema
+        session = mysqlx.get_session(dbOptions)
+        session.sql("USE popular").execute()
+
+        for row in iterator:
+            # Run upsert (insert or update existing)
+            sql = session.sql("INSERT INTO smart_cuisine "
+                              "(cuisine, avg_gpa) VALUES (?, ?) "
+                              "ON DUPLICATE KEY UPDATE avg_gpa=?")
+            sql.bind(row.fav_cuisine, row.avg_gpa, row.avg_gpa).execute()
+
+        session.close()
+
+    # Perform batch UPSERTS per data partition
+    batchDataframe.foreachPartition(save_to_db)
+
 # Example Part 7
 
 
-dbInsertStream = popular.writeStream \
+# dbInsertStream = popular.writeStream \
+#     .trigger(processingTime=slidingDuration) \
+#     .outputMode("update") \
+#     .foreachBatch(saveToDatabase) \
+#     .start()
+
+dbStudentInsertStream = smart_cuisine.writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \
-    .foreachBatch(saveToDatabase) \
+    .foreachBatch(saveStudentToDatabase) \
     .start()
 
 # Wait for termination

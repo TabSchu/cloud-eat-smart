@@ -5,6 +5,24 @@ metadata:
   name: mysql-deployment-init-configmap
 data:
   mysql-init.sql: |
+    CREATE TABLE `student` (
+      `id` INT NOT NULL,
+      `gpa` DOUBLE(10,2) NOT NULL,
+      `fav_cuisine`  VARCHAR(20) NOT NULL,
+      PRIMARY KEY (`id`)
+    );
+
+    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('1', '2.12', 'indian');
+    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('2', '3.12', 'swedish');
+    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('3', '1.12', 'italian');
+
+    CREATE TABLE `smart_cuisine` (
+      `cuisine` VARCHAR(20) NOT NULL,
+      `avg_gpa` DOUBLE(10,2),
+       PRIMARY KEY (`cuisine`)
+    );
+
+
     CREATE TABLE `missions` (
       `mission` VARCHAR(30) NOT NULL,
       `description`  VARCHAR(5000),
