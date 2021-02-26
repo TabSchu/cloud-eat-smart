@@ -247,18 +247,22 @@ app.get("/", (req, res) => {
 		//const popular = values[1]
 		const smartCuisine = values[1]
 
-		const missionsHtml = missions.result
-			.map(m => `<a href='missions/${m}'>${m}</a>`)
-			.join(", ")
+		console.log('values: ', values);
+		console.log('values 0: ', values[0]);
+		console.log('values 0: ', values[1]);
+		const missionsHtml = '<h1>mission result</h1>'
+		// const missionsHtml = missions.result
+		// 	.map(m => `<a href='missions/${m}'>${m}</a>`)
+		// 	.join(", ")
 
 		// const popularHtml = popular
 		// 	.map(pop => `<li> <a href='missions/${pop.mission}'>${pop.mission}</a> (${pop.count} views) </li>`)
 		// 	.join("\n")
 		//			<ol style="margin-left: 2em;"> ${popularHtml} </ol> 
-
-		const cuisineHtml = smartCuisine
-			.map(pop => `<li> ${pop.cuisine}(${pop.avg_gpa} gpa) </li>`)
-			.join("\n")
+		const cuisineHtml ="<h1>mjam</h1>"
+		// const cuisineHtml = smartCuisine
+		// 	.map(pop => `<li> ${pop.cuisine}(${pop.avg_gpa} gpa) </li>`)
+		// 	.join("\n")
 					
 
 		const html = `

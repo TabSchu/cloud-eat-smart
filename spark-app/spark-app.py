@@ -1,7 +1,9 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
+from builtins import round as rounding
 from pyspark.sql.types import IntegerType, StringType, StructType, TimestampType, DoubleType
 import mysqlx
+import math
 
 dbOptions = {"host": "my-app-mysql-service", 'port': 33060, "user": "root", "password": "mysecretpw"}
 dbSchema = 'popular'
@@ -155,10 +157,12 @@ def saveStudentToDatabase(batchDataframe, batchId):
 
         for row in iterator:
             # Run upsert (insert or update existing)
-            sql = session.sql("INSERT INTO smart_cuisine "
-                              "(cuisine, avg_gpa) VALUES (?, ?) "
-                              "ON DUPLICATE KEY UPDATE avg_gpa=?")
-            sql.bind(row.fav_cuisine, row.avg_gpa, row.avg_gpa).execute()
+            print('################### avg_gpa')
+
+            if row.avg_gpa is not None:
+                avg_gpa = str(rounding(row.avg_gpa, 2))
+                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa) VALUES (?, ?) ON DUPLICATE KEY UPDATE avg_gpa=?")
+                sql.bind(row.fav_cuisine, avg_gpa, avg_gpa).execute()
 
         session.close()
 
