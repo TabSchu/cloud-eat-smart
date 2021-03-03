@@ -6,10 +6,10 @@ metadata:
 
 build:
   artifacts:
-    - image: farberg/popular-slides
+    - image: LOCALHOST:32000/popular-slides
       context: web-app
 
-    - image: farberg/popular-slides-spark
+    - image: LOCALHOST:32000/popular-slides-spark
       context: spark-app
 
 deploy:

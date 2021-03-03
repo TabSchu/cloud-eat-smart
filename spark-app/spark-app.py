@@ -104,7 +104,13 @@ smart_cuisine = trackingStudentMessages.groupBy(
         slidingDuration
     ),
     column("fav_cuisine")
-).avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
+
+).agg(count("parsed_timestamp").alias("amount_of_entries"), avg('gpa').alias('avg_gpa'))
+
+#).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
+
+
+#.avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
 
 # # Example Part 5
 # # Start running the query; print running counts to the console
@@ -154,16 +160,18 @@ def saveStudentToDatabase(batchDataframe, batchId):
         # Connect to database and use schema
         session = mysqlx.get_session(dbOptions)
         session.sql("USE popular").execute()
-
+              
         for row in iterator:
-            # Run upsert (insert or update existing)
-            print('################### avg_gpa')
+            # Run upsert (insert or update existing)        
 
             if row.avg_gpa is not None:
-                avg_gpa = str(rounding(row.avg_gpa, 2))
-                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa) VALUES (?, ?) ON DUPLICATE KEY UPDATE avg_gpa=?")
-                sql.bind(row.fav_cuisine, avg_gpa, avg_gpa).execute()
-
+                avg_gpa = str(rounding(row.avg_gpa, 2))   
+                selectCountSql = "SELECT count FROM smart_cuisine"   
+                count_result = session.sql(selectCountSql).execute()
+                print("#######")
+                print(count_result)
+                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ? AND count = ?")
+                sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
         session.close()
 
     # Perform batch UPSERTS per data partition

@@ -233,10 +233,10 @@ async function getMissions() {
 
 // Get popular missions (from db only)
 async function getSmartCuisine(maxCount) {
-	const query = "SELECT cuisine, avg_gpa FROM smart_cuisine ORDER BY avg_gpa DESC LIMIT ?"
+	const query = "SELECT cuisine, avg_gpa, count FROM smart_cuisine ORDER BY avg_gpa DESC LIMIT ?"
 	return (await executeQuery(query, [maxCount]))
 		.fetchAll()
-		.map(row => { console.log(row); ({ cuisine: row[0], avg_gpa: row[1] }); })
+		.map(row => { console.log("#######: " + row); return ({ cuisine: row[0], avg_gpa: row[1], count: row[2] }); })
 }
 
 // Return HTML for start page
@@ -246,6 +246,8 @@ app.get("/", (req, res) => {
 		const missions = values[0]
 		//const popular = values[1]
 		const smartCuisine = values[1]
+
+		
 
 		console.log('values: ', values);
 		console.log('values 0: ', values[0]);
@@ -259,10 +261,10 @@ app.get("/", (req, res) => {
 		// 	.map(pop => `<li> <a href='missions/${pop.mission}'>${pop.mission}</a> (${pop.count} views) </li>`)
 		// 	.join("\n")
 		//			<ol style="margin-left: 2em;"> ${popularHtml} </ol> 
-		const cuisineHtml ="<h1>mjam</h1>"
-		// const cuisineHtml = smartCuisine
-		// 	.map(pop => `<li> ${pop.cuisine}(${pop.avg_gpa} gpa) </li>`)
-		// 	.join("\n")
+		//const cuisineHtml ="<h1>mjam</h1>"
+		 const cuisineHtml = smartCuisine
+		 	.map(pop => `<li> ${pop.cuisine}(${pop.avg_gpa} gpa) </li>`)
+		 	.join("\n")
 					
 
 		const html = `
@@ -307,7 +309,7 @@ async function getMission(mission) {
 
 app.get("/missions/:mission", (req, res) => {
 	let mission = req.params["mission"]
-	let student = {gpa : 2.21, fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
+	let student = {gpa : Math.floor(Math.random()*2), fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
 
 	// // Send the tracking message to Kafka
 	// sendTrackingMessage({
