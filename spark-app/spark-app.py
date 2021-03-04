@@ -98,14 +98,19 @@ trackingStudentMessages = kafkaMessages.select(
 # Example Part 4.2
 # Compute most popular slides
 smart_cuisine = trackingStudentMessages.groupBy(
-    window(
-        column("parsed_timestamp"),
-        windowDuration,
-        slidingDuration
-    ),
-    column("fav_cuisine")
+        column("fav_cuisine")
 
 ).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
+
+# smart_cuisine = trackingStudentMessages.groupBy(
+#     window(
+#         column("parsed_timestamp"),
+#         windowDuration,
+#         slidingDuration
+#     ),
+#     column("fav_cuisine")
+
+# ).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
 
 #new_avg_gpa = smart_cuisine.avg('gpa').avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
 #new_count = smart_cuisine.count()
@@ -172,13 +177,14 @@ def saveStudentToDatabase(batchDataframe, batchId):
                 avg_gpa = str(rounding(row.avg_gpa, 2))   
                 #count_result = session.sql(selectCountSql).execute()
              
-                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ? AND count = ?")
+                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
                 print("##############")
                 print(row.fav_cuisine)
                 print(avg_gpa)
                 print(row.amount_of_entries)
                 print(avg_gpa)
                 print(row.amount_of_entries)
+                print(sql)
                 print("##############")
 
                 sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
