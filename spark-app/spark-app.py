@@ -8,7 +8,7 @@ import math
 dbOptions = {"host": "my-app-mysql-service", 'port': 33060, "user": "root", "password": "mysecretpw"}
 dbSchema = 'popular'
 windowDuration = '5 minutes'
-slidingDuration = '1 minute'
+slidingDuration = '5 minutes'
 
 # Example Part 1
 # Create a spark session
@@ -105,12 +105,16 @@ smart_cuisine = trackingStudentMessages.groupBy(
     ),
     column("fav_cuisine")
 
-).agg(count("parsed_timestamp").alias("amount_of_entries"), avg('gpa').alias('avg_gpa'))
+).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
 
+#new_avg_gpa = smart_cuisine.avg('gpa').avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
+#new_count = smart_cuisine.count()
+
+#.avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
 #).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
 
 
-#.avg('gpa').withColumnRenamed('avg(gpa)', 'avg_gpa')
+#
 
 # # Example Part 5
 # # Start running the query; print running counts to the console
@@ -166,11 +170,17 @@ def saveStudentToDatabase(batchDataframe, batchId):
 
             if row.avg_gpa is not None:
                 avg_gpa = str(rounding(row.avg_gpa, 2))   
-                selectCountSql = "SELECT count FROM smart_cuisine"   
-                count_result = session.sql(selectCountSql).execute()
-                print("#######")
-                print(count_result)
+                #count_result = session.sql(selectCountSql).execute()
+             
                 sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ? AND count = ?")
+                print("##############")
+                print(row.fav_cuisine)
+                print(avg_gpa)
+                print(row.amount_of_entries)
+                print(avg_gpa)
+                print(row.amount_of_entries)
+                print("##############")
+
                 sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
         session.close()
 
