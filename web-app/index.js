@@ -10,6 +10,8 @@ const app = express()
 const cacheTimeSecs = 15
 const numberOfMissions = 30
 
+const {generateDataset} = require('./data');
+
 // -------------------------------------------------------
 // Command-line options
 // -------------------------------------------------------
@@ -309,7 +311,25 @@ async function getMission(mission) {
 
 app.get("/missions/:mission", (req, res) => {
 	let mission = req.params["mission"]
-	let student = {gpa : Math.floor(Math.random()*2), fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
+
+	const student = generateDataset();
+	console.log(student);
+	//y = Math random 1- 30
+
+	//const student = cusines[y]
+
+	// const italian = {gpa : Math.floor(Math.random()*2), fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
+	// const asian = {gpa: Math.floor(Math.random()*2), fav_cuisine: "asian", timestamp: Math.floor(new Date() / 1000)}
+	// let student;
+	// var y = Math.random();
+	// if (y < 0.5) {
+	// 	student = asian;
+	// }
+	// else {
+	// 	student = italian;
+	// }
+
+	// console.log(student);
 
 	// // Send the tracking message to Kafka
 	// sendTrackingMessage({
