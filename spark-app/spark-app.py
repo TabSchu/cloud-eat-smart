@@ -37,6 +37,8 @@ kafkaMessages = spark \
 trackingStudentSchema = StructType() \
     .add("gpa", DoubleType()) \
     .add("fav_cuisine", StringType()) \
+    .add("fav_lunch", StringType()) \
+    .add("fav_breakfast", StringType()) \
     .add("timestamp", IntegerType())
 
 
@@ -81,6 +83,8 @@ trackingStudentMessages = kafkaMessages.select(
 ) \
     .withColumnRenamed('json.gpa', 'gpa') \
     .withColumnRenamed('json.fav_cuisine', 'fav_cuisine') \
+    .withColumnRenamed('json.fav_lunch', 'fav_lunch') \
+    .withColumnRenamed('json.fav_breakfast', 'fav_breakfast') \
     .withWatermark("parsed_timestamp", windowDuration)
 
 
@@ -101,6 +105,18 @@ smart_cuisine = trackingStudentMessages.groupBy(
         column("fav_cuisine")
 
 ).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
+
+smart_lunch = trackingStudentMessages.groupBy(
+        column("fav_lunch")
+
+).agg(avg('gpa').alias('avg_gpa'), count("fav_lunch").alias('amount_of_entries'))
+
+smart_breakfast = trackingStudentMessages.groupBy(
+        column("fav_breakfast")
+
+).agg(avg('gpa').alias('avg_gpa'), count("fav_breakfast").alias('amount_of_entries'))
+
+
 
 # smart_cuisine = trackingStudentMessages.groupBy(
 #     window(
@@ -133,7 +149,7 @@ smart_cuisine = trackingStudentMessages.groupBy(
 
 # Example Part 5.2
 # Start running the query; print running counts to the console
-consoleStudentDump = smart_cuisine \
+consoleCuisineDumb = smart_cuisine \
     .writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \
@@ -141,6 +157,21 @@ consoleStudentDump = smart_cuisine \
     .option("truncate", "false") \
     .start()
 
+consoleLunchDumb = smart_lunch \
+    .writeStream \
+    .trigger(processingTime=slidingDuration) \
+    .outputMode("update") \
+    .format("console") \
+    .option("truncate", "false") \
+    .start()
+
+consoleBreakfastDumb = smart_breakfast \
+    .writeStream \
+    .trigger(processingTime=slidingDuration) \
+    .outputMode("update") \
+    .format("console") \
+    .option("truncate", "false") \
+    .start()
 
 # # Example Part 6
 # def saveToDatabase(batchDataframe, batchId):
@@ -163,8 +194,9 @@ consoleStudentDump = smart_cuisine \
 #     batchDataframe.foreachPartition(save_to_db)
 
 # Example Part 6.2
-def saveStudentToDatabase(batchDataframe, batchId):
+def saveDataframeToDatabase(batchDataframe, batchId):
     # Define function to save a dataframe to mysql
+    
     def save_to_db(iterator):
         # Connect to database and use schema
         session = mysqlx.get_session(dbOptions)
@@ -175,22 +207,27 @@ def saveStudentToDatabase(batchDataframe, batchId):
 
             if row.avg_gpa is not None:
                 avg_gpa = str(rounding(row.avg_gpa, 2))   
-                #count_result = session.sql(selectCountSql).execute()
-             
-                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
-                print("##############")
-                print(row.fav_cuisine)
-                print(avg_gpa)
-                print(row.amount_of_entries)
-                print(avg_gpa)
-                print(row.amount_of_entries)
-                print(sql)
-                print("##############")
-
+            print(row)
+            #
+            print("COLUM NAME ############")
+            print(hasattr(row, 'fav_cuisine'))
+            if hasattr(row, 'fav_cuisine'):
+                print("IM IN FAV CUISINE ###########")
+                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")              
                 sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
+            elif hasattr(row, 'fav_lunch'):
+                print("IM IN FAV LUNCH ###########")
+                sql = session.sql("INSERT INTO smart_lunch (lunch, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
+                sql.bind(row.fav_lunch, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
+            elif hasattr(row, 'fav_breakfast'):
+                print("IM IN FAV BREAKFAST ###########")
+                sql = session.sql("INSERT INTO smart_breakfast (breakfast, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
+                sql.bind(row.fav_breakfast, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()                
+                
         session.close()
 
-    # Perform batch UPSERTS per data partition
+    # Perform batch UPSERTS per data partition   
+   
     batchDataframe.foreachPartition(save_to_db)
 
 # Example Part 7
@@ -204,11 +241,24 @@ def saveStudentToDatabase(batchDataframe, batchId):
 
 # test
 
-dbStudentInsertStream = smart_cuisine.writeStream \
+dbCuisineInsertStream = smart_cuisine.writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \
-    .foreachBatch(saveStudentToDatabase) \
+    .foreachBatch(saveDataframeToDatabase) \
     .start()
+
+dbLunchInsertStream = smart_lunch.writeStream \
+    .trigger(processingTime=slidingDuration) \
+    .outputMode("update") \
+    .foreachBatch(saveDataframeToDatabase) \
+    .start()
+
+dbBreakfastInsertStream = smart_breakfast.writeStream \
+    .trigger(processingTime=slidingDuration) \
+    .outputMode("update") \
+    .foreachBatch(saveDataframeToDatabase) \
+    .start()
+
 
 # Wait for termination
 spark.streams.awaitAnyTermination()

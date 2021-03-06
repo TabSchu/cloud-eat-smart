@@ -38,6 +38,6 @@ To develop using [Skaffold](https://skaffold.dev/), use `skaffold dev`.
 
 ### check database pod via console
 # todo: change id to id from your mysql-pod and add more sql queries if yo need
-microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM student; SELECT * FROM smart_cuisine; "
+microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM student; SELECT * FROM smart_cuisine; SELECT * FROM smart_breakfast; SELECT * FROM smart_lunch; "
   
 microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES ('italian', '0.5', '238') ON DUPLICATE KEY UPDATE avg_gpa = '0.5', count = '238'; SELECT * FROM smart_cuisine"
