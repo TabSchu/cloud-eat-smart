@@ -333,7 +333,7 @@ app.get("/food/:foodId", (req, res) => {
 	let foodId = req.params["foodId"];
 	console.log(foodId);
 	getFood(foodId).then(data => {
-		sendResponse(res, `<h1>hello from ${data.name}</h1><span>${data.description}</span>`)
+		sendResponse(res, `<h1>hello from ${data.name}</h1><span>${data.description}</span>`, data.cached)
 	}).catch(err => {
 		console.error(err)
 	})
