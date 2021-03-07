@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: popular-slides-web
-          image: farberg//popular-slides
+          image: farberg/popular-slides
           ports:
             - containerPort: 3000
 
