@@ -7,8 +7,8 @@ const MemcachePlus = require('memcache-plus');
 const express = require('express')
 
 const app = express()
-const cacheTimeSecs = 15
-const numberOfMissions = 30
+const cacheTimeSecs = 15;
+const numberOfFoods = 12;
 
 const {generateDataset} = require('./data');
 
@@ -134,6 +134,7 @@ const producer = kafka.producer()
 // // End
 
 // Send tracking message to Kafka
+//TODO :RENAME FUNCTION
 async function sendStudentMessage(data) {
 	//Ensure the producer is connected
 	await producer.connect()
@@ -162,13 +163,12 @@ function sendResponse(res, html, cachedResult) {
 			<title>Big Data Use-Case Demo</title>
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
 			<script>
-				function fetchRandomMissions() {
+				function generateRandomSurveys() {
 					const maxRepetitions = Math.floor(Math.random() * 200)
-					document.getElementById("out").innerText = "Fetching " + maxRepetitions + " random missions, see console output"
+					document.getElementById("out").innerText = "Generating " + maxRepetitions + " random surveys, see console output"
 					for(var i = 0; i < maxRepetitions; ++i) {
-						const missionId = Math.floor(Math.random() * ${numberOfMissions})
-						console.log("Fetching mission id " + missionId)
-						fetch("/missions/sts-" + missionId, {cache: 'no-cache'})
+						console.log("Generating" +  maxRepetitions +  " Survey Datasets")
+						fetch("/survey/", {cache: 'no-cache'})
 					}
 				}
 			</script>
@@ -177,7 +177,7 @@ function sendResponse(res, html, cachedResult) {
 			<h1>Big Data Use Case Demo</h1>
 			<h1>Hello World!</h1>
 			<p>
-				<a href="javascript: fetchRandomMissions();">Randomly fetch some missions</a>
+				<a href="javascript: generateRandomSurveys();">Randomly fetch some missions</a>
 				<span id="out"></span>
 			</p>
 			${html}
@@ -198,9 +198,9 @@ function sendResponse(res, html, cachedResult) {
 // Start page
 // -------------------------------------------------------
 
-// Get list of missions (from cache or db)
-async function getMissions() {
-	const key = 'missions'
+// Get list of food (from cache or db)
+async function getFoods() {
+	const key = 'food'
 	let cachedata = await getFromCache(key)
 
 	if (cachedata) {
@@ -208,16 +208,16 @@ async function getMissions() {
 		return { result: cachedata, cached: true }
 	} else {
 		console.log(`Cache miss for key=${key}, querying database`)
-		let executeResult = await executeQuery("SELECT mission FROM missions", [])
+		let executeResult = await executeQuery("SELECT id, name FROM food", [])
 		let data = executeResult.fetchAll()
 		if (data) {
-			let result = data.map(row => row[0])
+			let result = data.map(row => row);
 			console.log(`Got result=${result}, storing in cache`)
 			if (memcached)
 				await memcached.set(key, result, cacheTimeSecs);
 			return { result, cached: false }
 		} else {
-			throw "No missions data found"
+			throw "No food data found"
 		}
 	}
 }
@@ -244,20 +244,18 @@ async function getSmartCuisine(maxCount) {
 // Return HTML for start page
 app.get("/", (req, res) => {
 	const topX = 10;
-	Promise.all([getMissions(), getSmartCuisine(topX)]).then(values => {  //, getPopular(topX)
-		const missions = values[0]
+	Promise.all([getFoods(), getSmartCuisine(topX)]).then(values => {  //, getPopular(topX)
+		const food = values[0]
 		//const popular = values[1]
 		const smartCuisine = values[1]
 
 		
-
 		console.log('values: ', values);
 		console.log('values 0: ', values[0]);
 		console.log('values 0: ', values[1]);
-		const missionsHtml = '<h1>mission result</h1>'
-		// const missionsHtml = missions.result
-		// 	.map(m => `<a href='missions/${m}'>${m}</a>`)
-		// 	.join(", ")
+		const foodHtml = food.result
+		 	.map(m => `<a href='food/${m[0]}'>${m[1]}</a>`)
+		 	.join(", ")
 
 		// const popularHtml = popular
 		// 	.map(pop => `<li> <a href='missions/${pop.mission}'>${pop.mission}</a> (${pop.count} views) </li>`)
@@ -270,14 +268,14 @@ app.get("/", (req, res) => {
 					
 
 		const html = `
-			<h1>Top ${topX} Missions</h1>		
+			<h1>Top ${topX} Foods</h1>		
 			<p>
 			<ol style="margin-left: 2em;"> ${cuisineHtml} </ol> 
 			</p>
-			<h1>All Missions</h1>
-			<p> ${missionsHtml} </p>
+			<h1>All Foods</h1>
+			<p> ${foodHtml} </p>
 		`
-		sendResponse(res, html, missions.cached)
+		sendResponse(res, html, food.cached)
 	})
 })
 
@@ -285,10 +283,10 @@ app.get("/", (req, res) => {
 // Get a specific mission (from cache or DB)
 // -------------------------------------------------------
 
-async function getMission(mission) {
-	const query = "SELECT mission, heading, description FROM missions WHERE mission = ?"
-	const key = 'mission_' + mission
-	let cachedata = await getFromCache(key)
+async function getFood(foodId) {
+	const query = "SELECT id, name, type, description FROM food WHERE id = ?";
+	const key = foodId;
+	let cachedata = await getFromCache(key);
 
 	if (cachedata) {
 		console.log(`Cache hit for key=${key}, cachedata = ${cachedata}`)
@@ -296,62 +294,50 @@ async function getMission(mission) {
 	} else {
 		console.log(`Cache miss for key=${key}, querying database`)
 
-		let data = (await executeQuery(query, [mission])).fetchOne()
+		let data = (await executeQuery(query, [foodId])).fetchOne()
 		if (data) {
-			let result = { mission: data[0], heading: data[1], description: data[2] }
+			//let result = { mission: data[0], heading: data[1], description: data[2] }
+			let result = { id: data[0], name: data[1], type: data[2], description: data[3]};
 			console.log(`Got result=${result}, storing in cache`)
 			if (memcached)
 				await memcached.set(key, result, cacheTimeSecs);
 			return { ...result, cached: false }
 		} else {
-			throw "No data found for this mission"
+			throw "No data found for this food"
 		}
 	}
 }
 
-app.get("/missions/:mission", (req, res) => {
-	let mission = req.params["mission"]
-
+app.get("/survey", (req, res) => {
 	const student = generateDataset();
 	console.log(student);
-	//y = Math random 1- 30
-
-	//const student = cusines[y]
-
-	// const italian = {gpa : Math.floor(Math.random()*2), fav_cuisine: "italian", timestamp: Math.floor(new Date() / 1000)}
-	// const asian = {gpa: Math.floor(Math.random()*2), fav_cuisine: "asian", timestamp: Math.floor(new Date() / 1000)}
-	// let student;
-	// var y = Math.random();
-	// if (y < 0.5) {
-	// 	student = asian;
-	// }
-	// else {
-	// 	student = italian;
-	// }
-
-	// console.log(student);
-
-	// // Send the tracking message to Kafka
-	// sendTrackingMessage({
-	// 	mission,
-	// 	timestamp: Math.floor(new Date() / 1000)
-	// }).then(() => console.log("Sent to kafka"))
-	// 	.catch(e => console.log("Error sending to kafka", e))
-
+	
 	// Send the tracking message to Kafka
 	sendStudentMessage(student).then(() => console.log("Sent Student to kafka"))
 		.catch(e => console.log("Student Error sending to kafka", e))
 
+	sendResponse(res, `<h1>Hello From survey</h1><p></p>`)
+
 	// Send reply to browser
-	getMission(mission).then(data => {
-		sendResponse(res, `<h1>${data.mission}</h1><p>${data.heading}</p>` +
-			data.description.split("\n").map(p => `<p>${p}</p>`).join("\n"),
-			data.cached
-		)
-	}).catch(err => {
-		sendResponse(res, `<h1>Error</h1><p>${err}</p>`, false)
-	})
+	// getMission(mission).then(data => {
+	// 	sendResponse(res, `<h1>${data.mission}</h1><p>${data.heading}</p>` +
+	// 		data.description.split("\n").map(p => `<p>${p}</p>`).join("\n"),
+	// 		data.cached
+	// 	)
+	// }).catch(err => {
+	// 	sendResponse(res, `<h1>Error</h1><p>${err}</p>`, false)
+	// })
 });
+
+app.get("/food/:foodId", (req, res) => {
+	let foodId = req.params["foodId"];
+	console.log(foodId);
+	getFood(foodId).then(data => {
+		sendResponse(res, `<h1>hello from ${data.name}</h1><span>${data.description}</span>`)
+	}).catch(err => {
+		console.error(err)
+	})
+})
 
 
 

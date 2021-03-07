@@ -207,22 +207,16 @@ def saveDataframeToDatabase(batchDataframe, batchId):
 
             if row.avg_gpa is not None:
                 avg_gpa = str(rounding(row.avg_gpa, 2))   
-            print(row)
-            #
-            print("COLUM NAME ############")
-            print(hasattr(row, 'fav_cuisine'))
-            if hasattr(row, 'fav_cuisine'):
-                print("IM IN FAV CUISINE ###########")
-                sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")              
-                sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
-            elif hasattr(row, 'fav_lunch'):
-                print("IM IN FAV LUNCH ###########")
-                sql = session.sql("INSERT INTO smart_lunch (lunch, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
-                sql.bind(row.fav_lunch, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
-            elif hasattr(row, 'fav_breakfast'):
-                print("IM IN FAV BREAKFAST ###########")
-                sql = session.sql("INSERT INTO smart_breakfast (breakfast, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
-                sql.bind(row.fav_breakfast, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()                
+   
+                if hasattr(row, 'fav_cuisine'):
+                    sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")              
+                    sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
+                elif hasattr(row, 'fav_lunch'):
+                    sql = session.sql("INSERT INTO smart_lunch (lunch, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
+                    sql.bind(row.fav_lunch, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
+                elif hasattr(row, 'fav_breakfast'):
+                    sql = session.sql("INSERT INTO smart_breakfast (breakfast, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")
+                    sql.bind(row.fav_breakfast, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()                
                 
         session.close()
 

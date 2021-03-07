@@ -5,16 +5,29 @@ metadata:
   name: mysql-deployment-init-configmap
 data:
   mysql-init.sql: |
-    CREATE TABLE `student` (
+    CREATE TABLE `food` (
       `id` INT NOT NULL,
-      `gpa` DOUBLE(10,2) NOT NULL,
-      `fav_cuisine`  VARCHAR(20) NOT NULL,
+      `name` VARCHAR(20) NOT NULL,
+      `type` VARCHAR(20) NOT NULL,
+      `description`  VARCHAR(300) NOT NULL,
       PRIMARY KEY (`id`)
     );
 
-    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('1', '2.12', 'indian');
-    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('2', '3.12', 'swedish');
-    INSERT INTO student (id, gpa, fav_cuisine) VALUES ('3', '1.12', 'italian');
+    INSERT INTO food (id, name, type, description) VALUES ('1', 'italian', 'cuisine', 'spaghetti only');
+    INSERT INTO food (id, name, type, description) VALUES ('2', 'asian', 'cuisine', 'rice only');
+    INSERT INTO food (id, name, type, description) VALUES ('3', 'german', 'cuisine', 'bratwurst only');
+    INSERT INTO food (id, name, type, description) VALUES ('4', 'french', 'cuisine', 'baguette only');
+
+    INSERT INTO food (id, name, type, description) VALUES ('21', 'pizza', 'lunch', 'round bread with tomato sauce and cheese');
+    INSERT INTO food (id, name, type, description) VALUES ('22', 'rice', 'lunch', 'just rice');
+    INSERT INTO food (id, name, type, description) VALUES ('23', 'noodles', 'lunch', 'really long bread');
+    INSERT INTO food (id, name, type, description) VALUES ('24', 'tteokbokki', 'lunch', 'rice cakes');
+
+    INSERT INTO food (id, name, type, description) VALUES ('41', 'bread', 'breakfast', 'freshly baked');
+    INSERT INTO food (id, name, type, description) VALUES ('42', 'cereals', 'breakfast', 'with milk');
+    INSERT INTO food (id, name, type, description) VALUES ('43', 'donuts', 'breakfast', 'with a hole');
+    INSERT INTO food (id, name, type, description) VALUES ('44', 'scrambled eggs', 'breakfast', '4 eggs without milk');
+    
 
     CREATE TABLE `smart_cuisine` (
       `cuisine` VARCHAR(20) NOT NULL,
