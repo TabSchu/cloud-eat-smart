@@ -179,7 +179,7 @@ spec:
     spec:
       containers:
         - name: popular-slides-spark
-          image: farberg/popular-slides-spark
+          image: localhost:32000/popular-slides-spark
           # Mount the volume that has been populated by the init container
           env:
             - name: HADOOP_CONF_DIR
