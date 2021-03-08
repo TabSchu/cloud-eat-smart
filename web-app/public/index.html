@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Big Data Use-Case Demo</title>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+			
+			<script>
+				function generateRandomSurveys() {
+					const maxRepetitions = Math.floor(Math.random() * 200)
+					document.getElementById("out").innerText = "Generating " + maxRepetitions + " random surveys, see console output"
+					for(var i = 0; i < maxRepetitions; ++i) {
+						console.log("Generating" +  maxRepetitions +  " Survey Datasets")
+						fetch("/survey/", {cache: 'no-cache'})
+					}
+				}
+			</script>
+		</head>
+		<body>
+			<h1>Big Data Use Case Demo</h1>
+			<h1>Hello World!</h1>
+			<p>
+				<a href="javascript: generateRandomSurveys();">Randomly fetch some missions</a>
+				<span id="out"></span>
+			</p>
+			<h1>Top <%= topX %> Cuisines</h1>		
+			<p>
+			<ol style="margin-left: 2em;"> 
+				<% for(var i=0; i<smartCuisine.length; i++) {%>
+					<li><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa)</li>
+				
+				<% } %>
+			</ol> 
+			</p>
+			<h1>Top <%= topX %> Lunches</h1>		
+			<p>
+			<ol style="margin-left: 2em;"> 
+				<% for(var i=0; i<smartLunch.length; i++) {%>
+					<li><%= smartLunch[i].lunch %> (<%= smartLunch[i].avg_gpa %> gpa)</li>
+				
+				<% } %>
+			</ol> 
+			</p>
+			<h1>Top <%= topX %> Breakfast</h1>		
+			<p>
+			<ol style="margin-left: 2em;"> 
+				<% for(var i=0; i<smartBreakfast.length; i++) {%>
+					<li><%= smartBreakfast[i].breakfast %> (<%= smartBreakfast[i].avg_gpa %> gpa)</li>
+				
+				<% } %>
+			</ol> 
+			</p>
+			<h1>All Foods</h1>
+			<% for(var i=0; i<foods.length; i++) {%>
+				<a href="<%=`food/${foods[i].id}`%>"><%= foods[i].name %></a>,
+			 <% } %>
+			<hr>
+			<h2>Information about the generated page</h4>
+			<ul>
+				<li>Server: <%= hostname %></li>
+				<li><%= date %></li>
+				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
+				<li>Cached result: <%= cachedResult %></li>
+			</ul>
+		</body>
+	</html>
