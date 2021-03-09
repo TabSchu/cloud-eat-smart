@@ -3,9 +3,12 @@
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Big Data Use-Case Demo</title>
+			<title>Eat Smart Clud Application</title>
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
-			
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
 			<script>
 				function generateRandomSurveys() {
 					const maxRepetitions = Math.floor(Math.random() * 200)
@@ -18,12 +21,53 @@
 			</script>
 		</head>
 		<body>
-			<h1>Big Data Use Case Demo</h1>
-			<h1>Hello World!</h1>
+			<h1>Eat Smart Cloud Big Data</h1>
 			<p>
 				<a href="javascript: generateRandomSurveys();">Randomly generate Survey Results for Student Food GPA Relation</a>
 				<span id="out"></span>
 			</p>
+			<div class="container-fluid">
+				
+				<!--Table data row-->
+				<div class="row">
+					<div class="col-12 col-md-6 col-lg-4">
+						<div >
+						<h2>Top <%= topX %> Cuisines</h2>
+
+							<ol> 
+								<% for(var i=0; i<smartCuisine.length; i++) {%>
+									<li class="text-left"><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa)</li>
+							
+								<% } %>
+							</ol> 
+						</div>
+						<h4>Average GPA in relation to favorite cuisine</h4>
+						<canvas id="cuisineBarChart"></canvas>
+						<h4>Distribution of votes</h4>
+						<canvas id="cuisinePieChart"></canvas>
+					</div>
+					<div class="col-12 col-md-6 col-lg-4">
+						<h2>Top <%= topX %> Lunches</h2>
+
+						<ol style="margin-left: 2em;"> 
+							<% for(var i=0; i<smartLunch.length; i++) {%>
+								<li><%= smartLunch[i].lunch %> (<%= smartLunch[i].avg_gpa %> gpa)</li>
+							
+							<% } %>
+						</ol> 
+					</div>
+					<div class="col-12 col-md-6 col-lg-4">
+						<h2>Top <%= topX %> Breakfasts</h2>
+
+						<ol style="margin-left: 2em;"> 
+							<% for(var i=0; i<smartBreakfast.length; i++) {%>
+								<li><%= smartBreakfast[i].breakfast %> (<%= smartBreakfast[i].avg_gpa %> gpa)</li>
+							
+							<% } %>
+						</ol> 
+					</div>
+				</div>			
+			</div>
 			<h1>Top <%= topX %> Cuisines</h1>		
 			<p>
 			<ol style="margin-left: 2em;"> 
@@ -63,5 +107,33 @@
 				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
 				<li>Cached result: <%= cachedResult %></li>
 			</ul>
+			<script>
+
+
+				var ctxCuisineBarChart = document.getElementById('cuisineBarChart').getContext('2d');
+				var cuisineBarChart = new Chart(ctxCuisineBarChart, {
+					type: 'bar',
+					data: {
+						labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+						datasets: [{
+							backgroundColor: 'rgb(255, 99, 132)',
+							borderColor: 'rgb(255, 99, 132)',
+							data: [0, 10, 5, 2, 20, 30, 45]
+						}]
+					},
+				});
+				var ctxCuisinePieChart = document.getElementById('cuisinePieChart').getContext('2d');
+				var cuisinePieChart = new Chart(ctxCuisinePieChart, {
+					type: 'pie',
+					data: {
+						labels: ['Red', 'Yellow', 'Blue'],
+						datasets: [{
+							backgroundColor: ['red', 'yellow', 'blue'],
+							borderColor: 'rgb(255, 99, 132)',
+							data: [55, 10, 5]
+						}]
+					},
+				});
+			</script>
 		</body>
 	</html>
