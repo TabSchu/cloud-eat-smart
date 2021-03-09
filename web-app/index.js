@@ -144,7 +144,7 @@ async function getFoods() {
 	let cachedata = await getFromCache(key)
 
 	if (cachedata) {
-		console.log(`Cache hit for key=${key}, cachedata = ${cachedata}`)
+		console.log(`Cache hit for key=${key}, cachedata = ${JSON.stringify(cachedata)}`)
 		return { result: cachedata, cached: true }
 	} else {
 		console.log(`Cache miss for key=${key}, querying database`)
@@ -153,7 +153,7 @@ async function getFoods() {
 		if (data) {
 			let result = data.map(row => ({id: row[0], name: row[1]}));
 			
-			console.log(`Got result=${result}, storing in cache`)
+			console.log(`Got result=${JSON.stringify(result)}, storing in cache`)
 			if (memcached)
 				await memcached.set(key, result, cacheTimeSecs);
 			return { result, cached: false }
@@ -216,7 +216,7 @@ async function getFood(foodId) {
 	let cachedata = await getFromCache(key);
 
 	if (cachedata) {
-		console.log(`Cache hit for key=${key}, cachedata = ${cachedata}`)
+		console.log(`Cache hit for key=${key}, cachedata = ${JSON.stringify(cachedata)}`)
 		return { ...cachedata, cached: true }
 	} else {
 		console.log(`Cache miss for key=${key}, querying database`)
@@ -224,7 +224,7 @@ async function getFood(foodId) {
 		let data = (await executeQuery(query, [foodId])).fetchOne()
 		if (data) {
 			let result = { id: data[0], name: data[1], type: data[2], description: data[3]};
-			console.log(`Got result=${result}, storing in cache`)
+			console.log(`Got result=${JSON.stringify(result)}, storing in cache`)
 			if (memcached)
 				await memcached.set(key, result, cacheTimeSecs);
 			return { ...result, cached: false }

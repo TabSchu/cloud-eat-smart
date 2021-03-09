@@ -1,38 +1,29 @@
 <!DOCTYPE html>
 		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Big Data Use-Case Demo</title>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
-			<script>
-				function generateRandomSurveys() {
-					const maxRepetitions = Math.floor(Math.random() * 200)
-					document.getElementById("out").innerText = "Generating " + maxRepetitions + " random surveys, see console output"
-					for(var i = 0; i < maxRepetitions; ++i) {
-						console.log("Generating" +  maxRepetitions +  " Survey Datasets")
-						fetch("/survey/", {cache: 'no-cache'})
-					}
-				}
-			</script>
-		</head>
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Eat Smart Cloud Application</title>
+				<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css"> -->
+				<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+				<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>				
+			</head>
 		<body>
-			<h1>Big Data Use Case Demo</h1>
-			<h1>Hello World!</h1>
-			<p>
-				<a href="javascript: generateRandomSurveys();">Randomly generate Survey Results for Student Food GPA Relation</a>
-				<span id="out"></span>
-			</p>
-			<h2><%= food.name %></h2>
-            <span><%= food.type %></span>
-            <p><%= food.description %></p>
-			<hr>
-			<h2>Information about the generated page</h4>
-			<ul>
-				<li>Server: <%= hostname %></li>
-				<li><%= date %></li>
-				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
-				<li>Cached result: <%= cachedResult %></li>
-			</ul>
+			<div style="margin-left: 2em;">
+				<h1>Eat Smart Cloud Big Data</h1>
+				
+				<h2><%= food.name %></h2>
+				<h5><%= food.type.charAt(0).toUpperCase() + food.type.slice(1) %></h5>
+				<p><%= food.description %></p>
+			</div>
+				<hr>
+				<h2>Information about the generated page</h4>
+				<ul>
+					<li>Server: <%= hostname %></li>
+					<li><%= date %></li>
+					<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
+					<li>Cached result: <%= cachedResult %></li>
+				</ul>
 		</body>
 	</html>

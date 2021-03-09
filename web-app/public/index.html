@@ -3,8 +3,8 @@
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Eat Smart Clud Application</title>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+			<title>Eat Smart Cloud Application</title>
+			<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css"> -->
 			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 			<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -21,6 +21,7 @@
 			</script>
 		</head>
 		<body>
+			
 			<h1>Eat Smart Cloud Big Data</h1>
 			<p>
 				<a href="javascript: generateRandomSurveys();">Randomly generate Survey Results for Student Food GPA Relation</a>
@@ -30,72 +31,65 @@
 				
 				<!--Table data row-->
 				<div class="row">
-					<div class="col-12 col-md-6 col-lg-4">
-						<div >
+					<div class="col-12 col-md-6 col-lg-4" style="margin-bottom: 1em;">
 						<h2>Top <%= topX %> Cuisines</h2>
+						<%if ( smartCuisine.length > 0 ) { %>
+							<ol style="margin-left: 2em;"> 
 
-							<ol> 
-								<% for(var i=0; i<smartCuisine.length; i++) {%>
-									<li class="text-left"><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa)</li>
-							
+							<% for(var i=0; i<smartCuisine.length; i++) {%>
+
+								<li class="text-left"><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa) <%= smartCuisine[i].count%> Votes</li>
+								
+								<% } %>
+							</ol> 						
+							<h4>Average GPA in relation to favorite cuisine</h4>
+							<canvas id="cuisineBarChart"></canvas>
+							<h4>Distribution of votes</h4>
+							<canvas id="cuisinePieChart"></canvas>
+						<% } else { %>
+							<p>There is no data yet.</p>
+						<% } %>
+						
+					</div>
+					<div class="col-12 col-md-6 col-lg-4" style="margin-bottom: 1em;">
+						<h2>Top <%= topX %> Lunches</h2>
+						<%if ( smartLunch.length > 0 ) { %>
+							<ol style="margin-left: 2em;"> 
+								<% for(var i=0; i<smartLunch.length; i++) {%>
+									<li><%= smartLunch[i].lunch %> (<%= smartLunch[i].avg_gpa %> gpa) <%= smartLunch[i].count%> Votes</li>
+								
 								<% } %>
 							</ol> 
-						</div>
-						<h4>Average GPA in relation to favorite cuisine</h4>
-						<canvas id="cuisineBarChart"></canvas>
-						<h4>Distribution of votes</h4>
-						<canvas id="cuisinePieChart"></canvas>
-					</div>
-					<div class="col-12 col-md-6 col-lg-4">
-						<h2>Top <%= topX %> Lunches</h2>
+							<h4>Average GPA in relation to favorite lunch</h4>
+							<canvas id="lunchBarChart"></canvas>
+							<h4>Distribution of votes</h4>
+							<canvas id="lunchPieChart"></canvas>
+						<% } else { %>
+							<p>There is no data yet.</p>
+						<% } %>
 
-						<ol style="margin-left: 2em;"> 
-							<% for(var i=0; i<smartLunch.length; i++) {%>
-								<li><%= smartLunch[i].lunch %> (<%= smartLunch[i].avg_gpa %> gpa)</li>
-							
-							<% } %>
-						</ol> 
+						
 					</div>
-					<div class="col-12 col-md-6 col-lg-4">
+					<div class="col-12 col-md-6 col-lg-4" style="margin-bottom: 1em;">
 						<h2>Top <%= topX %> Breakfasts</h2>
-
-						<ol style="margin-left: 2em;"> 
-							<% for(var i=0; i<smartBreakfast.length; i++) {%>
-								<li><%= smartBreakfast[i].breakfast %> (<%= smartBreakfast[i].avg_gpa %> gpa)</li>
-							
-							<% } %>
-						</ol> 
+						<%if ( smartLunch.length > 0 ) { %>
+							<ol style="margin-left: 2em;"> 
+								<% for(var i=0; i<smartBreakfast.length; i++) {%>
+									<li><%= smartBreakfast[i].breakfast %> (<%= smartBreakfast[i].avg_gpa %> gpa) <%= smartBreakfast[i].count%> Votes</li>
+								
+								<% } %>
+							</ol> 
+							<h4>Average GPA in relation to favorite breakfast</h4>
+							<canvas id="breakfastBarChart"></canvas>
+							<h4>Distribution of votes</h4>
+							<canvas id="breakfastPieChart"></canvas>
+						<% } else { %>
+							<p>There is no data yet.</p>
+						<% } %>						
 					</div>
 				</div>			
-			</div>
-			<h1>Top <%= topX %> Cuisines</h1>		
-			<p>
-			<ol style="margin-left: 2em;"> 
-				<% for(var i=0; i<smartCuisine.length; i++) {%>
-					<li><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa)</li>
-				
-				<% } %>
-			</ol> 
-			</p>
-			<h1>Top <%= topX %> Lunches</h1>		
-			<p>
-			<ol style="margin-left: 2em;"> 
-				<% for(var i=0; i<smartLunch.length; i++) {%>
-					<li><%= smartLunch[i].lunch %> (<%= smartLunch[i].avg_gpa %> gpa)</li>
-				
-				<% } %>
-			</ol> 
-			</p>
-			<h1>Top <%= topX %> Breakfast</h1>		
-			<p>
-			<ol style="margin-left: 2em;"> 
-				<% for(var i=0; i<smartBreakfast.length; i++) {%>
-					<li><%= smartBreakfast[i].breakfast %> (<%= smartBreakfast[i].avg_gpa %> gpa)</li>
-				
-				<% } %>
-			</ol> 
-			</p>
-			<h1>All Foods</h1>
+			</div>			
+			<h1>All Foods/Cuisines</h1>
 			<% for(var i=0; i<foods.length; i++) {%>
 				<a href="<%=`food/${foods[i].id}`%>"><%= foods[i].name %></a>,
 			 <% } %>
@@ -107,33 +101,125 @@
 				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
 				<li>Cached result: <%= cachedResult %></li>
 			</ul>
+
+			<!-- Getting the variables for chart.js-->
 			<script>
-
-
-				var ctxCuisineBarChart = document.getElementById('cuisineBarChart').getContext('2d');
+			if(<%- smartCuisine.length > 0 %>) {
+			var ctxCuisineBarChart = document.getElementById('cuisineBarChart').getContext('2d');
 				var cuisineBarChart = new Chart(ctxCuisineBarChart, {
 					type: 'bar',
 					data: {
-						labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+						labels: <%- JSON.stringify(smartCuisine.map(c => c.cuisine)) %>,
 						datasets: [{
-							backgroundColor: 'rgb(255, 99, 132)',
-							borderColor: 'rgb(255, 99, 132)',
-							data: [0, 10, 5, 2, 20, 30, 45]
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartCuisine.map(c => c.avg_gpa)) %>,
 						}]
 					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+								beginAtZero: true,
+								max: 4.0
+								}
+							}]
+						}
+					}
+					
 				});
 				var ctxCuisinePieChart = document.getElementById('cuisinePieChart').getContext('2d');
 				var cuisinePieChart = new Chart(ctxCuisinePieChart, {
 					type: 'pie',
 					data: {
-						labels: ['Red', 'Yellow', 'Blue'],
+						labels: <%- JSON.stringify(smartCuisine.map(c => c.cuisine)) %>,
 						datasets: [{
-							backgroundColor: ['red', 'yellow', 'blue'],
-							borderColor: 'rgb(255, 99, 132)',
-							data: [55, 10, 5]
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartCuisine.map(c => c.count)) %>,
 						}]
 					},
 				});
+			}
+			if(<%- smartLunch.length > 0 %>) {
+
+				var ctxLunchBarChart = document.getElementById('lunchBarChart').getContext('2d');
+				var lunchBarChart = new Chart(ctxLunchBarChart, {
+					type: 'bar',
+					data: {
+						labels: <%- JSON.stringify(smartLunch.map(c => c.lunch)) %>,
+						datasets: [{
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartLunch.map(c => c.avg_gpa)) %>,
+						}]
+					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+								beginAtZero: true,
+								max: 4.0
+								}
+							}]
+						}
+					}
+					
+				});
+				var ctxLunchPieChart = document.getElementById('lunchPieChart').getContext('2d');
+				var lunchPieChart = new Chart(ctxLunchPieChart, {
+					type: 'pie',
+					data: {
+						labels: <%- JSON.stringify(smartLunch.map(c => c.lunch)) %>,
+						datasets: [{
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartLunch.map(c => c.count)) %>,
+						}]
+					},
+				});
+			}
+			if(<%- smartBreakfast.length > 0 %>) {
+
+				var ctxBreakfastBarChart = document.getElementById('breakfastBarChart').getContext('2d');
+				var breakfastBarChart = new Chart(ctxBreakfastBarChart, {
+					type: 'bar',
+					data: {
+						labels: <%- JSON.stringify(smartBreakfast.map(c => c.breakfast)) %>,
+						datasets: [{
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartBreakfast.map(c => c.avg_gpa)) %>,
+						}]
+					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+								beginAtZero: true,
+								max: 4.0
+								}
+							}]
+						}
+					}
+					
+				});
+				var ctxBreakfastPieChart = document.getElementById('breakfastPieChart').getContext('2d');
+				var breakfastPieChart = new Chart(ctxBreakfastPieChart, {
+					type: 'pie',
+					data: {
+						labels: <%- JSON.stringify(smartBreakfast.map(c => c.breakfast)) %>,
+						datasets: [{
+							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							data: <%- JSON.stringify(smartBreakfast.map(c => c.count)) %>,
+						}]
+					},
+				});
+			}
 			</script>
 		</body>
 	</html>
