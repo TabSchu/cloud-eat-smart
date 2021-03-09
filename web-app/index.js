@@ -13,13 +13,11 @@ app.set('view engine', 'html');
 
 
 const cacheTimeSecs = 15;
-
 const {generateDataset} = require('./data');
 
 // -------------------------------------------------------
 // Command-line options
 // -------------------------------------------------------
-
 let options = optionparser
 	.storeOptionsAsProperties(true)
 	// Web server
@@ -46,7 +44,6 @@ let options = optionparser
 // -------------------------------------------------------
 // Database Configuration
 // -------------------------------------------------------
-
 const dbConfig = {
 	host: options.mysqlHost,
 	port: options.mysqlPort,
@@ -120,25 +117,8 @@ const kafka = new Kafka({
 })
 
 const producer = kafka.producer()
-// End
 
 // Send tracking message to Kafka
-// async function sendTrackingMessage(data) {
-// 	//Ensure the producer is connected
-// 	await producer.connect()
-
-// 	//Send message
-// 	await producer.send({
-// 		topic: options.kafkaTopicTracking,
-// 		messages: [
-// 			{ value: JSON.stringify(data) }
-// 		]
-// 	})
-// }
-// // End
-
-// Send tracking message to Kafka
-//TODO :RENAME FUNCTION
 async function sendStudentMessage(data) {
 	//Ensure the producer is connected
 	await producer.connect()
@@ -183,23 +163,12 @@ async function getFoods() {
 	}
 }
 
-
-
-
-// // Get popular missions (from db only)
-// async function getPopular(maxCount) {
-// 	const query = "SELECT mission, count FROM popular ORDER BY count DESC LIMIT ?"
-// 	return (await executeQuery(query, [maxCount]))
-// 		.fetchAll()
-// 		.map(row => ({ mission: row[0], count: row[1] }))
-// }
-
 // Get popular cuisines (from db only)
 async function getSmartCuisine(maxCount) {
 	const query = "SELECT cuisine, avg_gpa, count FROM smart_cuisine ORDER BY avg_gpa DESC LIMIT ?"
 	return (await executeQuery(query, [maxCount]))
 		.fetchAll()
-		.map(row => { console.log("#######: " + row); return ({ cuisine: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
+		.map(row => { return ({ cuisine: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
 }
 
 // Get popular lunches (from db only)
@@ -207,7 +176,7 @@ async function getSmartLunch(maxCount) {
 	const query = "SELECT lunch, avg_gpa, count FROM smart_lunch ORDER BY avg_gpa DESC LIMIT ?"
 	return (await executeQuery(query, [maxCount]))
 		.fetchAll()
-		.map(row => { console.log("#######: " + row); return ({ lunch: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
+		.map(row => { return ({ lunch: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
 }
 
 // Get popular breakfasts (from db only)
@@ -215,7 +184,7 @@ async function getSmartBreakfast(maxCount) {
 	const query = "SELECT breakfast, avg_gpa, count FROM smart_breakfast ORDER BY avg_gpa DESC LIMIT ?"
 	return (await executeQuery(query, [maxCount]))
 		.fetchAll()
-		.map(row => { console.log("#######: " + row); return ({ breakfast: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
+		.map(row => { return ({ breakfast: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
 }
 
 // Return HTML for start page
@@ -226,7 +195,6 @@ app.get("/", (req, res) => {
 		const smartCuisine = values[1];
 		const smartLunch = values[2];
 		const smartBreakfast = values[3];
-
 					
 		const parameters = {
 			foods: foods.result, smartCuisine, smartBreakfast, smartLunch, cachedResult: foods.cached, topX,
@@ -239,7 +207,7 @@ app.get("/", (req, res) => {
 })
 
 // -------------------------------------------------------
-// Get a specific mission (from cache or DB)
+// Get a specific food (from cache or DB)
 // -------------------------------------------------------
 
 async function getFood(foodId) {
@@ -255,7 +223,6 @@ async function getFood(foodId) {
 
 		let data = (await executeQuery(query, [foodId])).fetchOne()
 		if (data) {
-			//let result = { mission: data[0], heading: data[1], description: data[2] }
 			let result = { id: data[0], name: data[1], type: data[2], description: data[3]};
 			console.log(`Got result=${result}, storing in cache`)
 			if (memcached)
@@ -269,13 +236,12 @@ async function getFood(foodId) {
 
 app.get("/survey", (req, res) => {
 	const student = generateDataset();
-	console.log(student);
 	
 	// Send the tracking message to Kafka
-	sendStudentMessage(student).then(() => console.log("Sent Student to kafka"))
-		.catch(e => console.log("Student Error sending to kafka", e))
+	sendStudentMessage(student).then(() => console.log("Sent Student Survey Result to kafka"))
+		.catch(e => console.log("Student Survey Result Error sending to kafka", e))
 
-	res.send("Survey done");
+	res.status(200).send("Survey done");
 	
 });
 
@@ -284,9 +250,6 @@ app.get("/food/:foodId", (req, res) => {
 	console.log(foodId);
 	getFood(foodId).then(data => {
 
-		
-		//foods: foods.result, smartCuisine, smartBreakfast, smartLunch, cachedResult: foods.cached, topX,
-		//	hostname: os.hostname(), date: new Date(), memcachedServers, 
 		const parameters = {
 			food: data, cachedResult: data.cached, hostname: os.hostname(), date: new Date(), memcachedServers
 
@@ -294,13 +257,10 @@ app.get("/food/:foodId", (req, res) => {
 		res.render(path.join(__dirname, 'public/detail.html'), 
 		parameters);
 
-		//sendResponse(res, `<h1>hello from ${data.name}</h1><span>${data.description}</span>`, data.cached)
 	}).catch(err => {
 		console.error(err)
 	})
 })
-
-
 
 // -------------------------------------------------------
 // Main method
