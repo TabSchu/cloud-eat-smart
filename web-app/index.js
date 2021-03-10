@@ -148,10 +148,10 @@ async function getFoods() {
 		return { result: cachedata, cached: true }
 	} else {
 		console.log(`Cache miss for key=${key}, querying database`)
-		let executeResult = await executeQuery("SELECT id, name FROM food", [])
+		let executeResult = await executeQuery("SELECT id, name, type FROM food", [])
 		let data = executeResult.fetchAll()
 		if (data) {
-			let result = data.map(row => ({id: row[0], name: row[1]}));
+			let result = data.map(row => ({id: row[0], name: row[1], type: row[2]}));
 			
 			console.log(`Got result=${JSON.stringify(result)}, storing in cache`)
 			if (memcached)
@@ -235,13 +235,28 @@ async function getFood(foodId) {
 }
 
 app.get("/survey", (req, res) => {
-	const student = generateDataset();
-	
-	// Send the tracking message to Kafka
-	sendStudentMessage(student).then(() => console.log("Sent Student Survey Result to kafka"))
-		.catch(e => console.log("Student Survey Result Error sending to kafka", e))
 
-	res.status(200).send("Survey done");
+	let cuisines = [];
+	let lunches = [];
+	let breakfasts = [];
+	console.log(getFoods());
+	getFoods().then(foods => {
+		console.log(foods);
+		cuisines = foods.result.filter(f => f.type === 'cuisine').map(f => f.name);
+		lunches = foods.result.filter(f => f.type === 'lunch').map(f => f.name);
+		breakfasts = foods.result.filter(f => f.type === 'breakfast').map(f => f.name);
+
+		const student = generateDataset(cuisines, lunches, breakfasts);
+		// Send the tracking message to Kafka
+		sendStudentMessage(student).then(() => console.log("Sent Student Survey Result to kafka"))
+			.catch(e => console.log("Student Survey Result Error sending to kafka", e))
+
+		res.status(200).send("Survey done");
+
+	});
+	
+	
+
 	
 });
 

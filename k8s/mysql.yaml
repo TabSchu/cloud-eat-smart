@@ -13,20 +13,60 @@ data:
       PRIMARY KEY (`id`)
     );
 
-    INSERT INTO food (id, name, type, description) VALUES ('1', 'italian', 'cuisine', 'spaghetti only');
-    INSERT INTO food (id, name, type, description) VALUES ('2', 'asian', 'cuisine', 'rice only');
-    INSERT INTO food (id, name, type, description) VALUES ('3', 'german', 'cuisine', 'bratwurst only');
-    INSERT INTO food (id, name, type, description) VALUES ('4', 'french', 'cuisine', 'baguette only');
+    INSERT INTO food (id, name, type, description) VALUES ('1', 'italian', 'cuisine', 'Italian cuisine is a Mediterranean cuisine consisting of the ingredients, recipes and cooking techniques developed across the Italian Peninsula since antiquity, and later spread around the world together with waves of Italian diaspora.');
+    INSERT INTO food (id, name, type, description) VALUES ('2', 'chinese', 'cuisine', 'Chinese cuisine is as diverse as their culture where every region writes up a new menu.');
+    INSERT INTO food (id, name, type, description) VALUES ('3', 'mexican', 'cuisine', 'Mexican street food can include tacos, quesadillas, pambazos, tamales, huaraches, alambres, al pastor, and food not suitable to cook at home.');
+    INSERT INTO food (id, name, type, description) VALUES ('4', 'german', 'cuisine', 'The cuisine of Germany is made up of many different local or regional cuisines, reflecting the countrys federal history.');
+    INSERT INTO food (id, name, type, description) VALUES ('5', 'french', 'cuisine', 'A meal often consists of three courses, hors d oeuvre or entree introductory course, sometimes soup, plat principal main course, fromage cheese course or dessert.');
+    INSERT INTO food (id, name, type, description) VALUES ('6', 'indian', 'cuisine', 'Indian cuisine consists of a variety of regional and traditional cuisines native to the Indian subcontinent.');
+    INSERT INTO food (id, name, type, description) VALUES ('7', 'thai', 'cuisine', 'Thai cuisine is the national cuisine of Thailand. Thai cooking places emphasis on lightly prepared dishes with strong aromatic components and a spicy edge.');
+    INSERT INTO food (id, name, type, description) VALUES ('8', 'korean', 'cuisine', 'Korean cuisine is largely based on rice, vegetables, and (at least in the South) meats.');
+    INSERT INTO food (id, name, type, description) VALUES ('9', 'japanese', 'cuisine', 'Side dishes often consist of fish, pickled vegetables, and vegetables cooked in broth.');
+    INSERT INTO food (id, name, type, description) VALUES ('10', 'american', 'cuisine', 'American cuisine is primarily Western in origin, but has been significantly influenced by indigenous American Indians, African Americans, Asians, Europeans, Pacific Islanders, and Hispanic Americans, reflecting its history as a melting pot of different cultures.');
 
-    INSERT INTO food (id, name, type, description) VALUES ('21', 'pizza', 'lunch', 'round bread with tomato sauce and cheese');
-    INSERT INTO food (id, name, type, description) VALUES ('22', 'rice', 'lunch', 'just rice');
-    INSERT INTO food (id, name, type, description) VALUES ('23', 'noodles', 'lunch', 'really long bread');
-    INSERT INTO food (id, name, type, description) VALUES ('24', 'tteokbokki', 'lunch', 'rice cakes');
 
-    INSERT INTO food (id, name, type, description) VALUES ('41', 'bread', 'breakfast', 'freshly baked');
-    INSERT INTO food (id, name, type, description) VALUES ('42', 'cereals', 'breakfast', 'with milk');
-    INSERT INTO food (id, name, type, description) VALUES ('43', 'donuts', 'breakfast', 'with a hole');
-    INSERT INTO food (id, name, type, description) VALUES ('44', 'scrambled eggs', 'breakfast', '4 eggs without milk');
+    INSERT INTO food (id, name, type, description) VALUES ('11', 'pizza', 'lunch', 'Pizza is a savory dish of Italian origin consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese.');
+    INSERT INTO food (id, name, type, description) VALUES ('12', 'rice', 'lunch', 'Rice is the seed of the grass species Oryza sativa (Asian rice) or less commonly Oryza glaberrima (African rice).');
+    INSERT INTO food (id, name, type, description) VALUES ('13', 'noodles', 'lunch', 'Noodles are a type of food made from unleavened dough which is rolled flat and cut, stretched or extruded, into long strips or strings.');
+    INSERT INTO food (id, name, type, description) VALUES ('14', 'tteokbokki', 'lunch', 'Tteokbokki is one of the most popular Korean street foods in Korea.');
+    INSERT INTO food (id, name, type, description) VALUES ('15', 'lasagna', 'lunch', 'Lasagna is an Italian dish made of stacked layers of thin flat pasta alternating with fillings such as ragù.');
+    INSERT INTO food (id, name, type, description) VALUES ('16', 'ham sandwich', 'lunch', 'The ham sandwich is a common type of sandwich. The bread may be fresh or toasted, and it can be made with a variety of toppings.');
+    INSERT INTO food (id, name, type, description) VALUES ('17', 'buddha bowl', 'lunch', 'A Buddha bowl is a vegetarian meal, served on a single bowl or high-rimmed plate, which consists of small portions of several foods, served cold.');
+    INSERT INTO food (id, name, type, description) VALUES ('18', 'pea soup', 'lunch', 'Pea soup or split pea soup is soup made typically from dried peas.');
+    INSERT INTO food (id, name, type, description) VALUES ('19', 'grilled chicken salad', 'lunch', 'Like tuna salad and egg salad, it may be served on top of lettuce, tomato, avocado, or some combination of these.');
+    INSERT INTO food (id, name, type, description) VALUES ('20', 'chili con carne', 'lunch', 'Chili Con Carne is a spicy stew containing chili peppers');
+    INSERT INTO food (id, name, type, description) VALUES ('21', 'gyros', 'lunch', 'Gyros is a Greek dish made from meat cooked on a vertical rotisserie.');
+    INSERT INTO food (id, name, type, description) VALUES ('22', 'bbq', 'lunch', 'BBQ is a special type of grill. It is also a way to prepare meat which is then cooked with a barbecue.');
+    INSERT INTO food (id, name, type, description) VALUES ('23', 'pho', 'lunch', 'Pho is a traditional Vietnamese rice-noodle soup dish.');
+    INSERT INTO food (id, name, type, description) VALUES ('24', 'cevapcici', 'lunch', 'Cevapcici is a skinless meat sausage.');
+    INSERT INTO food (id, name, type, description) VALUES ('25', 'sausages', 'lunch', 'Sausages are a meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings.');
+    INSERT INTO food (id, name, type, description) VALUES ('26', 'curry', 'lunch', 'Curry is a variety of dishes originating in the Indian subcontinent.');
+    INSERT INTO food (id, name, type, description) VALUES ('27', 'tacos', 'lunch', 'Taco is a traditional Mexican dish consisting of a small hand-sized corn or wheat tortilla topped with a filling.');
+    INSERT INTO food (id, name, type, description) VALUES ('28', 'tuna salad', 'lunch', 'Tuna salad starts with a blend of two main ingredients: tuna and mayonnaise.');
+    INSERT INTO food (id, name, type, description) VALUES ('29', 'sushi', 'lunch', 'Sushi is a traditional Japanese dish of prepared vinegared rice.');
+    INSERT INTO food (id, name, type, description) VALUES ('30', 'cassoulet', 'lunch', 'Cassoulet is a casserole made particularly in the south of France.');
+
+    INSERT INTO food (id, name, type, description) VALUES ('31', 'bread', 'breakfast', 'Bread is a staple food prepared from a dough of flour and water, usually by baking.');
+    INSERT INTO food (id, name, type, description) VALUES ('32', 'cereals', 'breakfast', 'Cereal is a traditional breakfast made from processed cereal grains.');
+    INSERT INTO food (id, name, type, description) VALUES ('33', 'donuts', 'breakfast', 'A Donut is a type of deep fried dessert food made out of dough or batter. ');
+    INSERT INTO food (id, name, type, description) VALUES ('34', 'scrambled eggs', 'breakfast', 'Scrambled eggs is a dish made from beaten whites and yolks of eggs (usually chicken).');
+    INSERT INTO food (id, name, type, description) VALUES ('35', 'smoothie', 'breakfast', 'A smoothie is a drink made from pureed raw fruit and/or vegetables, using a blender.');
+    INSERT INTO food (id, name, type, description) VALUES ('36', 'baguette', 'breakfast', 'A baguette is a long, thin loaf of French bread that is commonly made from basic lean dough.');
+    INSERT INTO food (id, name, type, description) VALUES ('37', 'avocado toast', 'breakfast', 'Avocado toast is a type of open sandwich consisting of toast with mashed avocado, salt, black pepper, and citrus juice.');
+    INSERT INTO food (id, name, type, description) VALUES ('38', 'jam toast', 'breakfast', 'A jam sandwich is usually composed of two slices of bread with jam in the middle.');
+    INSERT INTO food (id, name, type, description) VALUES ('39', 'bacon', 'breakfast', 'Bacon is a type of salt-cured pork made from various cuts, typically from the pork belly or from the less fatty back cuts.');
+    INSERT INTO food (id, name, type, description) VALUES ('40', 'protein drink', 'breakfast', 'Whey protein is commonly marketed as a dietary supplement, typically sold in powdered form for mixing into beverages.');
+    INSERT INTO food (id, name, type, description) VALUES ('41', 'yogurt', 'breakfast', 'Yogurt is a milk product made by bacterial fermentation of milk.');
+    INSERT INTO food (id, name, type, description) VALUES ('42', 'fruit salad', 'breakfast', 'Fruit salad is a dish consisting of various kinds of fruit, sometimes served in a liquid, either their own juices or a syrup.');
+    INSERT INTO food (id, name, type, description) VALUES ('43', 'vegetables', 'breakfast', 'A vegetable is a plant or part of a plant used as food, typically as accompaniment to meat or fish, such as a cabbage, potato, carrot, or bean.');
+    INSERT INTO food (id, name, type, description) VALUES ('44', 'sweet bread', 'breakfast', 'Sweet bread, also referred to as pan dulce, buns or coffee bread, is a bread or cake that is typically sweet in flavor.');
+    INSERT INTO food (id, name, type, description) VALUES ('45', 'nutella toast', 'breakfast', 'Nutella is a brand of sweetened hazelnut cocoa spread.');
+    INSERT INTO food (id, name, type, description) VALUES ('46', 'rice dish', 'breakfast', 'A rice dish is a dish of cooked rice that has been stir-fried in a wok or a frying pan and is usually mixed with other ingredients such as eggs, vegetables, seafood, or meat.');
+    INSERT INTO food (id, name, type, description) VALUES ('47', 'jelly', 'breakfast', 'Gelatin or Jelly is a dessert item. Gelatin can come in different taste choices, or flavors, depending on what fruit or artificial flavor.');
+    INSERT INTO food (id, name, type, description) VALUES ('48', 'pudding', 'breakfast', 'Pudding is a popular dessert and snack. It tastes sweet, and comes in many flavors.');
+    INSERT INTO food (id, name, type, description) VALUES ('49', 'quinoa', 'breakfast', 'Quinoa is a grain crop that is grown for its edible seeds.');
+    INSERT INTO food (id, name, type, description) VALUES ('50', 'no breakfast', 'breakfast', 'Many people don not eat breakfast.');
+
     
 
     CREATE TABLE `smart_cuisine` (
