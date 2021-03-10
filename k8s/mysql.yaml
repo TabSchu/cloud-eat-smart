@@ -7,7 +7,7 @@ data:
   mysql-init.sql: |
     CREATE TABLE `food` (
       `id` INT NOT NULL,
-      `name` VARCHAR(20) NOT NULL,
+      `name` VARCHAR(40) NOT NULL,
       `type` VARCHAR(20) NOT NULL,
       `description`  VARCHAR(300) NOT NULL,
       PRIMARY KEY (`id`)
@@ -30,21 +30,21 @@ data:
     
 
     CREATE TABLE `smart_cuisine` (
-      `cuisine` VARCHAR(20) NOT NULL,
+      `cuisine` VARCHAR(50) NOT NULL,
       `avg_gpa` DOUBLE,
       `count` INT NOT NULL,
        PRIMARY KEY (`cuisine`)
     );
 
     CREATE TABLE `smart_lunch` (
-      `lunch` VARCHAR(20) NOT NULL,
+      `lunch` VARCHAR(50) NOT NULL,
       `avg_gpa` DOUBLE,
       `count` INT NOT NULL,
        PRIMARY KEY (`lunch`)
     );
 
     CREATE TABLE `smart_breakfast` (
-      `breakfast` VARCHAR(20) NOT NULL,
+      `breakfast` VARCHAR(50) NOT NULL,
       `avg_gpa` DOUBLE,
       `count` INT NOT NULL,
        PRIMARY KEY (`breakfast`)

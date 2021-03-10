@@ -104,14 +104,15 @@
 
 			<!-- Getting the variables for chart.js-->
 			<script>
+			const backgroundColors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#999900', '#9c679c'];
 			if(<%- smartCuisine.length > 0 %>) {
 			var ctxCuisineBarChart = document.getElementById('cuisineBarChart').getContext('2d');
 				var cuisineBarChart = new Chart(ctxCuisineBarChart, {
-					type: 'bar',
+					type: 'horizontalBar',
 					data: {
 						labels: <%- JSON.stringify(smartCuisine.map(c => c.cuisine)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartCuisine.map(c => c.avg_gpa)) %>,
 						}]
 					},
@@ -120,9 +121,9 @@
 							display: false
 						},
 						scales: {
-							yAxes: [{
+							xAxes: [{
 								ticks: {
-								beginAtZero: true,
+								min: 1.0,
 								max: 4.0
 								}
 							}]
@@ -136,7 +137,7 @@
 					data: {
 						labels: <%- JSON.stringify(smartCuisine.map(c => c.cuisine)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartCuisine.map(c => c.count)) %>,
 						}]
 					},
@@ -146,11 +147,11 @@
 
 				var ctxLunchBarChart = document.getElementById('lunchBarChart').getContext('2d');
 				var lunchBarChart = new Chart(ctxLunchBarChart, {
-					type: 'bar',
+					type: 'horizontalBar',
 					data: {
 						labels: <%- JSON.stringify(smartLunch.map(c => c.lunch)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartLunch.map(c => c.avg_gpa)) %>,
 						}]
 					},
@@ -159,9 +160,9 @@
 							display: false
 						},
 						scales: {
-							yAxes: [{
+							xAxes: [{
 								ticks: {
-								beginAtZero: true,
+								min: 1.0,
 								max: 4.0
 								}
 							}]
@@ -175,7 +176,7 @@
 					data: {
 						labels: <%- JSON.stringify(smartLunch.map(c => c.lunch)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartLunch.map(c => c.count)) %>,
 						}]
 					},
@@ -185,11 +186,11 @@
 
 				var ctxBreakfastBarChart = document.getElementById('breakfastBarChart').getContext('2d');
 				var breakfastBarChart = new Chart(ctxBreakfastBarChart, {
-					type: 'bar',
+					type: 'horizontalBar',
 					data: {
 						labels: <%- JSON.stringify(smartBreakfast.map(c => c.breakfast)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartBreakfast.map(c => c.avg_gpa)) %>,
 						}]
 					},
@@ -198,9 +199,9 @@
 							display: false
 						},
 						scales: {
-							yAxes: [{
+							xAxes: [{
 								ticks: {
-								beginAtZero: true,
+								min: 1.0,
 								max: 4.0
 								}
 							}]
@@ -214,7 +215,7 @@
 					data: {
 						labels: <%- JSON.stringify(smartBreakfast.map(c => c.breakfast)) %>,
 						datasets: [{
-							backgroundColor: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#3366cc', '#994499'], 
+							backgroundColor: backgroundColors, 
 							data: <%- JSON.stringify(smartBreakfast.map(c => c.count)) %>,
 						}]
 					},

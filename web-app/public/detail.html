@@ -10,13 +10,12 @@
 				<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>				
 			</head>
 		<body>
-			<div style="margin-left: 2em;">
 				<h1>Eat Smart Cloud Big Data</h1>
-				
-				<h2><%= food.name %></h2>
-				<h5><%= food.type.charAt(0).toUpperCase() + food.type.slice(1) %></h5>
-				<p><%= food.description %></p>
-			</div>
+				<div style="margin-left: 1em;">
+					<h2><%= food.name.charAt(0).toUpperCase() + food.name.slice(1) %></h2>
+					<h5><%= food.type.charAt(0).toUpperCase() + food.type.slice(1) %></h5>
+					<p><%= food.description %></p>
+				</div>
 				<hr>
 				<h2>Information about the generated page</h4>
 				<ul>
