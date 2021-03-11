@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: popular-slides
+  name: eat-smart
   labels:
-    app: popular-slides
+    app: eat-smart
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: popular-slides-web
+      app: eat-smart-web
   template:
     metadata:
       labels:
-        app: popular-slides-web
+        app: eat-smart-web
     spec:
       containers:
-        - name: popular-slides-web
-          image: farberg/popular-slides
+        - name: eat-smart-web
+          image: farberg/eat-smart
           ports:
             - containerPort: 3000
 
@@ -26,10 +26,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: popular-slides-service
+  name: eat-smart-service
 spec:
   selector:
-    app: popular-slides-web
+    app: eat-smart-web
   ports:
     - protocol: TCP
       port: 3000
@@ -41,7 +41,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: popular-slides-ingress
+  name: eat-smart-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -52,6 +52,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: popular-slides-service
+                name: eat-smart-service
                 port:
                   number: 3000
