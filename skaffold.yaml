@@ -2,14 +2,14 @@ apiVersion: skaffold/v2alpha4
 kind: Config
 
 metadata:
-  name: popular-slides
+  name: eat-smart
 
 build:
   artifacts:
-    - image: farberg/popular-slides
+    - image: farberg/eat-smart
       context: web-app
 
-    - image: farberg/popular-slides-spark
+    - image: farberg/eat-smart-spark
       context: spark-app
 
 deploy:
