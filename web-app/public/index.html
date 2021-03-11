@@ -4,9 +4,10 @@
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Eat Smart Cloud Application</title>
-			<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css"> -->
+			<!--Using bootstrap for simple styling + grid-system-->
 			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+			<!--Using chart.js for easy visualisation of data-->
 			<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 			<script>
@@ -31,11 +32,12 @@
 				
 				<!--Table data row-->
 				<div class="row">
+					<!--initialising a responsive column for different screen sizes-->
 					<div class="col-12 col-md-6 col-lg-4" style="margin-bottom: 1em;">
 						<h2>Top <%= topX %> Cuisines</h2>
-						<%if ( smartCuisine.length > 0 ) { %>
+						<%if ( smartCuisine.length > 0 ) { %> <!--if no data exits, do not render the chart-->
 							<ol style="margin-left: 2em;"> 
-
+							<!-- Iterate through chart.js entries and display available data -->
 							<% for(var i=0; i<smartCuisine.length; i++) {%>
 
 								<li class="text-left"><%= smartCuisine[i].cuisine %> (<%= smartCuisine[i].avg_gpa %> gpa) <%= smartCuisine[i].count%> Votes</li>
@@ -46,7 +48,7 @@
 							<canvas id="cuisineBarChart"></canvas>
 							<h4>Distribution of votes</h4>
 							<canvas id="cuisinePieChart"></canvas>
-						<% } else { %>
+						<% } else { %> <!--alternate text if there is no data available-->
 							<p>There is no data yet.</p>
 						<% } %>
 						
@@ -90,22 +92,25 @@
 				</div>			
 			</div>			
 			<h1>All Foods/Cuisines</h1>
-			<% for(var i=0; i<foods.length; i++) {%>
+			<% for(var i=0; i<foods.length; i++) {%> <!--List all available foods and link to the detail page-->
 				<a href="<%=`food/${foods[i].id}`%>"><%= foods[i].name %></a>,
 			 <% } %>
 			<hr>
 			<h2>Information about the generated page</h4>
 			<ul>
-				<li>Server: <%= hostname %></li>
-				<li><%= date %></li>
-				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li>
-				<li>Cached result: <%= cachedResult %></li>
+				<li>Server: <%= hostname %></li> <!--Shows the used server-->
+				<li><%= date %></li> <!--current Date-->
+				<li>Using <%= memcachedServers.length %> memcached Servers: <%= memcachedServers%></li> <!--Lists available memcached Servers-->
+				<li>Cached result: <%= cachedResult %></li> <!-- Indicates if the data is loaded from the cache or the database -->
 			</ul>
 
-			<!-- Getting the variables for chart.js-->
 			<script>
+			/*Init chart.js horizontalBars and Pie-charts for given data-values
+			use the below defined background colors
+			and the data passed through the express-routing ejs function*/
+
 			const backgroundColors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", '#dd4477', '#b82e2e', '#999900', '#9c679c'];
-			if(<%- smartCuisine.length > 0 %>) {
+			if(<%- smartCuisine.length > 0 %>) { //make sure there are entries, otherwise do not render the chart
 			var ctxCuisineBarChart = document.getElementById('cuisineBarChart').getContext('2d');
 				var cuisineBarChart = new Chart(ctxCuisineBarChart, {
 					type: 'horizontalBar',

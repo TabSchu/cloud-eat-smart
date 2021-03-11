@@ -59,23 +59,25 @@ trackingStudentMessages = kafkaMessages.select(
 
 
 
-# Compute most popular slides
+# Compute most favorite cuisine 
 smart_cuisine = trackingStudentMessages.groupBy(
         column("fav_cuisine")
 
 ).agg(avg('gpa').alias('avg_gpa'), count("fav_cuisine").alias('amount_of_entries'))
 
+# Compute most favorite lunch 
 smart_lunch = trackingStudentMessages.groupBy(
         column("fav_lunch")
 
 ).agg(avg('gpa').alias('avg_gpa'), count("fav_lunch").alias('amount_of_entries'))
 
+# Compute most favorite breakfast
 smart_breakfast = trackingStudentMessages.groupBy(
         column("fav_breakfast")
 
 ).agg(avg('gpa').alias('avg_gpa'), count("fav_breakfast").alias('amount_of_entries'))
 
-# Start running the query; print running counts to the console
+# Start running the cuisine query; print running counts to the console
 consoleCuisineDumb = smart_cuisine \
     .writeStream \
     .trigger(processingTime=slidingDuration) \
@@ -84,6 +86,7 @@ consoleCuisineDumb = smart_cuisine \
     .option("truncate", "false") \
     .start()
 
+# Start running the lunch query; print running counts to the console
 consoleLunchDumb = smart_lunch \
     .writeStream \
     .trigger(processingTime=slidingDuration) \
@@ -92,6 +95,7 @@ consoleLunchDumb = smart_lunch \
     .option("truncate", "false") \
     .start()
 
+# Start running the breakfast query; print running counts to the console
 consoleBreakfastDumb = smart_breakfast \
     .writeStream \
     .trigger(processingTime=slidingDuration) \
@@ -100,10 +104,8 @@ consoleBreakfastDumb = smart_breakfast \
     .option("truncate", "false") \
     .start()
 
-# Example Part 6.2
 def saveDataframeToDatabase(batchDataframe, batchId):
-    # Define function to save a dataframe to mysql
-    
+    # Define function to save a dataframe to mysql    
     def save_to_db(iterator):
         # Connect to database and use schema
         session = mysqlx.get_session(dbOptions)
@@ -113,7 +115,7 @@ def saveDataframeToDatabase(batchDataframe, batchId):
             # Run upsert (insert or update existing)
             if row.avg_gpa is not None:
                 avg_gpa = str(rounding(row.avg_gpa, 2))   
-   
+                #since there are 3 different tables hasattr(column_name) is a way to determine to which table the value should be written to
                 if hasattr(row, 'fav_cuisine'):
                     sql = session.sql("INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE avg_gpa = ?, count = ?")              
                     sql.bind(row.fav_cuisine, avg_gpa, row.amount_of_entries, avg_gpa, row.amount_of_entries).execute()
@@ -129,19 +131,21 @@ def saveDataframeToDatabase(batchDataframe, batchId):
     # Perform batch UPSERTS per data partition   
     batchDataframe.foreachPartition(save_to_db)
 
-# Example Part 7
+# Start Cuisine Batch Processing
 dbCuisineInsertStream = smart_cuisine.writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \
     .foreachBatch(saveDataframeToDatabase) \
     .start()
 
+# Start Lunch Batch Processing
 dbLunchInsertStream = smart_lunch.writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \
     .foreachBatch(saveDataframeToDatabase) \
     .start()
 
+# Start Breakfast Batch Processing
 dbBreakfastInsertStream = smart_breakfast.writeStream \
     .trigger(processingTime=slidingDuration) \
     .outputMode("update") \

@@ -8,6 +8,9 @@ const express = require('express')
 const path = require('path')
 
 const app = express()
+
+//This app is using ejs as a templating engine to include dynamic data
+//in static served html pages
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
@@ -138,12 +141,13 @@ async function sendStudentMessage(data) {
 // Start page
 // -------------------------------------------------------
 
-// Get list of food (from cache or db)
+// Get list of all foods (from cache or db)
 async function getFoods() {
 	const key = 'food'
 	let cachedata = await getFromCache(key)
 
 	if (cachedata) {
+		//Using JSON.stringify so console does show the object's content instead of [Object object]
 		console.log(`Cache hit for key=${key}, cachedata = ${JSON.stringify(cachedata)}`)
 		return { result: cachedata, cached: true }
 	} else {
@@ -187,19 +191,23 @@ async function getSmartBreakfast(maxCount) {
 		.map(row => { return ({ breakfast: row[0], avg_gpa: Number(row[1].toFixed(2)), count: row[2] }); })
 }
 
-// Return HTML for start page
+// Return HTML Template (index.html) with ejs-injection for start page
 app.get("/", (req, res) => {
 	const topX = 10;
-	Promise.all([getFoods(), getSmartCuisine(topX), getSmartLunch(topX), getSmartBreakfast(topX)]).then(values => {  //, getPopular(topX)
+	Promise.all([getFoods(), getSmartCuisine(topX), getSmartLunch(topX), getSmartBreakfast(topX)]).then(values => { 
+		//unwrap promise values
 		const foods = values[0];
 		const smartCuisine = values[1];
 		const smartLunch = values[2];
 		const smartBreakfast = values[3];
 					
+		//pass needed parameters to template
 		const parameters = {
 			foods: foods.result, smartCuisine, smartBreakfast, smartLunch, cachedResult: foods.cached, topX,
 			hostname: os.hostname(), date: new Date(), memcachedServers, 
 		}
+
+		//ejs-function to render the template with given parameters
 		res.render(path.join(__dirname, 'public/index.html'), 
 		parameters);
 
@@ -209,13 +217,13 @@ app.get("/", (req, res) => {
 // -------------------------------------------------------
 // Get a specific food (from cache or DB)
 // -------------------------------------------------------
-
 async function getFood(foodId) {
 	const query = "SELECT id, name, type, description FROM food WHERE id = ?";
 	const key = foodId;
 	let cachedata = await getFromCache(key);
 
 	if (cachedata) {
+		//Using JSON.stringify so console does show the object's content instead of [Object object]
 		console.log(`Cache hit for key=${key}, cachedata = ${JSON.stringify(cachedata)}`)
 		return { ...cachedata, cached: true }
 	} else {
@@ -234,41 +242,41 @@ async function getFood(foodId) {
 	}
 }
 
+//Survey route that on visit generates a student survey result and sends it to kafka
 app.get("/survey", (req, res) => {
 
 	let cuisines = [];
 	let lunches = [];
 	let breakfasts = [];
-	console.log(getFoods());
+	//get foods from database or cache, filter them with the given type
 	getFoods().then(foods => {
-		console.log(foods);
 		cuisines = foods.result.filter(f => f.type === 'cuisine').map(f => f.name);
 		lunches = foods.result.filter(f => f.type === 'lunch').map(f => f.name);
 		breakfasts = foods.result.filter(f => f.type === 'breakfast').map(f => f.name);
 
-		const student = generateDataset(cuisines, lunches, breakfasts);
+		//call generateDataSet-Method that randomly generates a survey result for a student
+		const studentSurvey = generateDataset(cuisines, lunches, breakfasts);
+		console.log(studentSurvey);
 		// Send the tracking message to Kafka
-		sendStudentMessage(student).then(() => console.log("Sent Student Survey Result to kafka"))
+		sendStudentMessage(studentSurvey).then(() => console.log("Sent Student Survey Result to kafka"))
 			.catch(e => console.log("Student Survey Result Error sending to kafka", e))
 
 		res.status(200).send("Survey done");
 
-	});
-	
-	
-
-	
+	});	
 });
 
+//Detail Page for food
 app.get("/food/:foodId", (req, res) => {
 	let foodId = req.params["foodId"];
-	console.log(foodId);
+	//get single food from database or cache, unwrap value
 	getFood(foodId).then(data => {
-
+		
 		const parameters = {
 			food: data, cachedResult: data.cached, hostname: os.hostname(), date: new Date(), memcachedServers
 
 		}
+		//send parameters to ejs-template and render it
 		res.render(path.join(__dirname, 'public/detail.html'), 
 		parameters);
 
@@ -277,13 +285,13 @@ app.get("/food/:foodId", (req, res) => {
 	})
 })
 
+
+//expose public-Directory so the application can serve the files in there
+app.use(express.static('/public'));
+
 // -------------------------------------------------------
 // Main method
 // -------------------------------------------------------
-
-app.use(express.static('/public'));
-
 app.listen(options.port, function () {
-	console.log("Node app is running at http://localhost:" + options.port)
-	
+	console.log("Node app is running at http://localhost:" + options.port)	
 });
