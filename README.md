@@ -1,5 +1,4 @@
-# Use Case: Student Eating Behavior in correlation to the Student's GPA
-## Hochschule Bremen, Submission for course Cloud & Big Data
+# Hochschule Bremen, Submission for course Cloud & Big Data
 
 Eat Smart - with Big Data!
 
@@ -10,14 +9,16 @@ Find out now with the results of this big data analysis from hundreds of data se
 
 Implemented by (Tabea Schuster, Leonard Tuturea, Lars Obist, Philipp Moritzer)
 
-![](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/EatSmartBigData.png?raw=true)
-## Idea
+A demonstration screencast of the appliction can be found in /documentation/Cloud Big Data Screencast.mp4
+
+![](https://github.com/TabSchu/cloud-eat-smart/blob/master/documentation/images/EatSmartBigData.png?raw=true)
+## Idea: Student Eating Behavior in correlation to the Student's GPA
 
 A web application to find out the correlation between food and GPA. Data for the application is generated through simulating student surveys, in which students register their GPA, as well as their favorite cuisine and lunch/breakfast options. The data from the surveys will then get aggregated and the application calculates the average GPA from all submissions of a specific cuisine or meal. These calculated results will then be displayed on the webpage for visitors to find out what kind of food might help them achieve good grades.
 
 ## Architecture
 
-![Architecture](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/architecture.png?raw=true)
+![Architecture](https://github.com/TabSchu/cloud-eat-smart/blob/master/documentation/images/architecture.png?raw=true)
 
 The application runs on a Kubernetes Cluster, in this case minikube/microk8s. Therefore it would be possible to scale the application and react to higher traffic / load by starting more pods of some of the services.
 
@@ -30,7 +31,7 @@ Kafka is the Big Data Messaging service where the website sends its data to. The
 
 ## Workflow
 
-![Workflow](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/workflow.png?raw=true)
+![Workflow](https://github.com/TabSchu/cloud-eat-smart/blob/master/documentation/images/workflow.png?raw=true)
 
 As shown in the image above, the user clicks on the link to generate multiple new sets of data. A GET-Request on the /survey route generates one set of data. In a real world scenario this could be the insert of a new survey result, after interviewing a group of students. Multiple institutes could insert / generate data at the same time in different instances of the web application. [index.js & *.html]
 The datasets will be send to Kafka. [spark-app.py:] Spark computes the data in streamed batches of data.
@@ -158,7 +159,7 @@ watch kubectl get all
 
 Boilerplate code taken from use-case: https://farberg.de/talks/big-data/code/use-case/ (Date: 13th March 2021), by Prof. Dennis Pfisterer
 
-Therotical knowledge gained by Prof. Dennis Pfisterer's course at Hochschule Bremen - Cloud & Big Data (Wintersemester 20/21)
+Therotical knowledge gained by Prof. Dennis Pfisterer's course at Hochschule Bremen - Cloud & Big Data (Wintersemester 20/21), see: https://farberg.de/talks/big-data/
 
 # License
 ## Creative Commons CC0 1.0 Universal
