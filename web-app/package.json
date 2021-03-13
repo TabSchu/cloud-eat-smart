@@ -16,6 +16,7 @@
     "express": "^4.17.1",
     "kafkajs": "^1.14.0",
     "lorem-ipsum": "^2.0.3",
-    "memcache-plus": "^0.2.21"
+    "memcache-plus": "^0.2.21",
+    "ejs":"^3.0.2"
   }
 }
