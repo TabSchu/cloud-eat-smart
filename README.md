@@ -1,12 +1,23 @@
 # Use Case: Student Eating Behavior in correlation to the Student's GPA
+## Hochschule Bremen, Submission for course Cloud & Big Data
 
+Eat Smart - with Big Data!
+
+Do donuts for breakfast make you smarter?
+After which dish do I write the best grades?
+
+Find out now with the results of this big data analysis from hundreds of data sets!
+
+Implemented by (Tabea Schuster, Leonard Tuturea, Lars Obist, Philipp Moritzer)
+
+![](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/EatSmartBigData.png?raw=true)
 ## Idea
 
 A web application to find out the correlation between food and GPA. Data for the application is generated through simulating student surveys, in which students register their GPA, as well as their favorite cuisine and lunch/breakfast options. The data from the surveys will then get aggregated and the application calculates the average GPA from all submissions of a specific cuisine or meal. These calculated results will then be displayed on the webpage for visitors to find out what kind of food might help them achieve good grades.
 
 ## Architecture
 
-![Architecture](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/architecture.png?raw=true))
+![Architecture](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/architecture.png?raw=true)
 
 The application runs on a Kubernetes Cluster, in this case minikube/microk8s. Therefore it would be possible to scale the application and react to higher traffic / load by starting more pods of some of the services.
 
@@ -31,7 +42,7 @@ The webapp visualises the result in a top ten list and charts. First, the app tr
 
 A Data Entry consists of a students GPA, his/her favorite cuisine, his/her favorite lunch, his/her favorite breakfast and a timestamp of the creation of the entry. For each new entry, a random GPA from 1.0 to 4.0 will be generated, the cuisine and meal preferences will then be randomly taken from pre-defined options. In order to produce more interesting results, weighted probabilities are used. The implementation of the data generation can be found under /web-app/data.
 
-```json
+```
 { 
 	gpa: '2.50', 
 	fav_cuisine: 'italian',
@@ -67,19 +78,31 @@ As a result, the only concerns of the index.js refer to the app logic for exampl
 
 ### Running minikube / microk8s
 
+For Windows (Windows Package Manager required): 
 ```bash
-for Windows: 	winget install minikube (Windows Package Manager required) 
-	      or:	choco install minikube (Chocolatey Package Manager required)
-for Mac: brew install minikube (Brew Package Manager required)
-
-Linux - Binary Download :  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-
-minikube start
+winget install minikube 
+```
+or (Chocolatey Package Manager required) :	
+```bash
+choco install minikube 
 ```
 
+For Mac (Brew Package Manager required): 
+```bash
+brew install minikube 
+```
+Linux - Binary Download : 
+```bash
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
+
+Start Minikube:
+```bash
+minikube start
+```
+## Prerequisites
 ### Enable ingress in minikube
 
 ```
@@ -120,7 +143,7 @@ minikube ip
 
 ## Useful commands
 
-### check database pod via console
+### Check database tables via console
 
 ```
 kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM food; SELECT * FROM smart_cuisine; SELECT * FROM smart_breakfast; SELECT * FROM smart_lunch;"
