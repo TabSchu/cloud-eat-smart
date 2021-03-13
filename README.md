@@ -1,8 +1,11 @@
-# Use Case: Popular NASA Shuttle Missions
+# Use Case: Student Eating Behavior in correlation to the Student's GPA
 
 ```json
 { 
-	mission: 'sts-10', 
+	gpa: '2.50', 
+	fav_cuisine: 'italian',
+	fav_lunch: 'pizza',
+	fav_breakfast: 'donuts',
 	timestamp: 1604325221 
 }
 ```
@@ -33,7 +36,7 @@ To develop using [Skaffold](https://skaffold.dev/), use `skaffold dev`.
 
 
 
-
+![xd](https://farberg.de/talks/big-data/img/use-case-overview.svg)
 
 
 ### check database pod via console
@@ -41,6 +44,11 @@ To develop using [Skaffold](https://skaffold.dev/), use `skaffold dev`.
 microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM food; SELECT * FROM smart_cuisine; SELECT * FROM smart_breakfast; SELECT * FROM smart_lunch; "
   
 microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES ('italian', '0.5', '238') ON DUPLICATE KEY UPDATE avg_gpa = '0.5', count = '238'; SELECT * FROM smart_cuisine"
+
+# References
+
+Boilerplate code taken from use-case: https://farberg.de/talks/big-data/code/use-case/ (Date: 13th March 2021), by Prof. Dennis Pfisterer
+Therotical knowledge gained by Prof. Dennis Pfisterer's course at Hochschule Bremen - Cloud & Big Data (Wintersemester 20/21)
 
 # License
 ## Creative Commons CC0 1.0 Universal
@@ -84,3 +92,5 @@ For these and/or other purposes and motivations, and without any expectation of 
     c. Affirmer disclaims responsibility for clearing rights of other persons that may apply to the Work or any use thereof, including without limitation any person's Copyright and Related Rights in the Work. Further, Affirmer disclaims responsibility for obtaining any necessary consents, permissions or other rights required for any use of the Work.
 
     d. Affirmer understands and acknowledges that Creative Commons is not a party to this document and has no duty or obligation with respect to this CC0 or use of the Work.
+
+    
