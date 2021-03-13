@@ -1,18 +1,44 @@
 # Use Case: Student Eating Behavior in correlation to the Student's GPA
 
-```json
-{ 
-	gpa: '2.50', 
-	fav_cuisine: 'italian',
-	fav_lunch: 'pizza',
-	fav_breakfast: 'donuts',
-	timestamp: 1604325221 
-}
-```
+## Idea
+
+This is a sample text
+
+## Architecture
+
+This is a sample text
+
+## Workflow
+
+This is a sample text
+
+## Generating data
+
+This is a sample text
+
+## Displaying the data in proper html
+
+This is a sample text
+
+### Chart.js
+
+This is a sample text
+
+### EJS
+
+This is a sample text
 
 ## Prerequisites
 
-A running Strimzi.io Kafka operator
+### Running minikube / microk8s
+
+This is a sample text 
+
+### Enable ingress in minikube
+
+This is a sample text
+
+### A running Strimzi.io Kafka operator
 
 ```bash
 helm repo add strimzi http://strimzi.io/charts/
@@ -20,14 +46,14 @@ helm install my-kafka-operator strimzi/strimzi-kafka-operator
 kubectl apply -f https://farberg.de/talks/big-data/code/helm-kafka-operator/kafka-cluster-def.yaml
 ```
 
-A running Hadoop cluster with YARN (for checkpointing)
+### A running Hadoop cluster with YARN (for checkpointing)
 
 ```bash
-helm delete my-hadoop-cluster # delete cluster, elsewise errors after computer restart
-# helm repo add stable https://kubernetes-charts.storage.googleapis.com/ -->nolonger available, instead try:
+helm delete my-hadoop-cluster # delete existing cluster beforehand, elsewise there might be errors
 helm repo add stable https://charts.helm.sh/stable
 helm install --namespace=default --set hdfs.dataNode.replicas=1 --set yarn.nodeManager.replicas=1 --set hdfs.webhdfs.enabled=true my-hadoop-cluster stable/hadoop
 ```
+
 
 
 ## Deploy
@@ -38,16 +64,36 @@ To develop using [Skaffold](https://skaffold.dev/), use `skaffold dev`.
 
 ![xd](https://farberg.de/talks/big-data/img/use-case-overview.svg)
 
+```json
+{ 
+	gpa: '2.50', 
+	fav_cuisine: 'italian',
+	fav_lunch: 'pizza',
+	fav_breakfast: 'donuts',
+	timestamp: 1604325221 
+}
+```
+
+
+## Useful commands
 
 ### check database pod via console
-# todo: change id to id from your mysql-pod and add more sql queries if yo need
-microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM food; SELECT * FROM smart_cuisine; SELECT * FROM smart_breakfast; SELECT * FROM smart_lunch; "
-  
-microk8s kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; INSERT INTO smart_cuisine (cuisine, avg_gpa, count) VALUES ('italian', '0.5', '238') ON DUPLICATE KEY UPDATE avg_gpa = '0.5', count = '238'; SELECT * FROM smart_cuisine"
+
+```
+kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecretpw -e "SHOW databases; USE popular; SHOW tables; SELECT * FROM food; SELECT * FROM smart_cuisine; SELECT * FROM smart_breakfast; SELECT * FROM smart_lunch;"
+```
+
+### Watch the cluster state
+```
+watch kubectl get all
+```
+
+### Start the 
 
 # References
 
 Boilerplate code taken from use-case: https://farberg.de/talks/big-data/code/use-case/ (Date: 13th March 2021), by Prof. Dennis Pfisterer
+
 Therotical knowledge gained by Prof. Dennis Pfisterer's course at Hochschule Bremen - Cloud & Big Data (Wintersemester 20/21)
 
 # License
