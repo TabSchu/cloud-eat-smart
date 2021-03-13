@@ -2,42 +2,89 @@
 
 ## Idea
 
-This is a sample text
+A web application to find out the correlation between food and GPA. Data for the application is generated through simulating student surveys, in which students register their GPA, as well as their favorite cuisine and lunch/breakfast options. The data from the surveys will then get aggregated and the application calculates the average GPA from all submissions of a specific cuisine or meal. These calculated results will then be displayed on the webpage for visitors to find out what kind of food might help them achieve good grades.
 
 ## Architecture
 
-This is a sample text
+![Architecture](/images/architecture.png?raw=true)
+
+The application runs on a Kubernetes Cluster, in this case minikube/microk8s. Therefore it would be possible to scale the application and react to higher traffic / load by starting more pods of some of the services.
+
+The loadbalancer is provided by Kubernetes with ingress and distributes the traffic to possible multiple instances of the web application.
+
+Multiple Webservers with a running node.js/express application serve the web application to the user.
+
+The Web Application either gets its data from a memcached server instance or directly from the database depending on whether the data is cached. There are multiple memcached instances running in the cluster and there is one database (MySQL)-Server running.
+Kafka is the Big Data Messaging service where the website sends its data to. The kafka cluster docks on the spark application also running on this cluster. The Spark Application which in our case runs as a Docker-Container computes the data and sends it directly back to the MySQL Database Server or the checkpoints will be stored in a Data Lake. The Datalake is implemented in a HDFS.
 
 ## Workflow
 
-This is a sample text
+![Architecture](/images/workflow.png?raw=true)
+
+As shown in the image above, the user clicks on the link to generate multiple new sets of data. A GET-Request on the /survey route generates one set of data. In a real world scenario this could be the insert of a new survey result, after interviewing a group of students. Multiple institutes could insert / generate data at the same time in different instances of the web application. [index.js & *.html]
+The datasets will be send to Kafka. [spark-app.py:] Spark computes the data in streamed batches of data.
+The result will be written into the MySQL database and the checkpoints will be written to HDFS. 
+The webapp visualises the result in a top ten list and charts. First, the app tries to fetch the data for the food and the “food-wiki-page” from the cache. If it is not already cached, the data will be queried from the MySQL DB.
+
 
 ## Generating data
 
-This is a sample text
+A Data Entry consists of a students GPA, his/her favorite cuisine, his/her favorite lunch, his/her favorite breakfast and a timestamp of the creation of the entry. For each new entry, a random GPA from 1.0 to 4.0 will be generated, the cuisine and meal preferences will then be randomly taken from pre-defined options. In order to produce more interesting results, weighted probabilities are used. The implementation of the data generation can be found under /web-app/data.
 
-## Displaying the data in proper html
+```json
+{ 
+	gpa: '2.50', 
+	fav_cuisine: 'italian',
+	fav_lunch: 'pizza',
+	fav_breakfast: 'donuts',
+	timestamp: 1604325221 
+}
+```
 
-This is a sample text
+## Aggregating the Data
+
+The data will be grouped by favorite cuisine, breakfast and lunch. This is not a chained group by, but three separated queries. These result in three database tables and three different top ten lists / charts for the frontend.
+For each group Avg GPA and count will be calculated. The data is not separated on timeframes, as the “study” examines the best overall food for a great GPA, not the changes over time.   
+If there exists already an entry for the specific food or cuisine in the database, the new data form the batch and the existing data will be aggregated. 
+
+
+## Displaying the data in proper HTML
+
 
 ### Chart.js
 
-This is a sample text
+For a better user experience, the generated data was visualised in charts. The JavaScript library chart.js was used to create bar charts as well as pie charts.
+The bar chart enables the user to make a comparison between different meals and their effect on the students GPAs.
+The pie chart is used to show which meal is most popular among the students.
 
 ### EJS
 
-This is a sample text
+To get a better separation of concerns, the visualisation of the frontend was separated from the logic in index.js. Therefore we created the index.html and detail.html. The templating language EJS was used to inject the data with javascript into the HTML template.
+As a result, the only concerns of the index.js refer to the app logic for example the reaction to the endpoint requests, sending data to kafka querying data from the cache or database.
+
 
 ## Prerequisites
 
 ### Running minikube / microk8s
 
-This is a sample text 
+```bash
+for Windows: 	winget install minikube (Windows Package Manager required) 
+	      or:	choco install minikube (Chocolatey Package Manager required)
+for Mac: brew install minikube (Brew Package Manager required)
+
+Linux - Binary Download :  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+
+minikube start
+```
 
 ### Enable ingress in minikube
 
-This is a sample text
-
+```
+minikube addons enable ingress
+```
 ### A running Strimzi.io Kafka operator
 
 ```bash
@@ -60,20 +107,16 @@ helm install --namespace=default --set hdfs.dataNode.replicas=1 --set yarn.nodeM
 
 To develop using [Skaffold](https://skaffold.dev/), use `skaffold dev`. 
 
+Microk8s: `skaffold dev --default-repo=localhost:32000`
 
 
-![xd](https://farberg.de/talks/big-data/img/use-case-overview.svg)
 
-```json
-{ 
-	gpa: '2.50', 
-	fav_cuisine: 'italian',
-	fav_lunch: 'pizza',
-	fav_breakfast: 'donuts',
-	timestamp: 1604325221 
-}
+
+Get the Minikube IP and open \<ip\>:\<port\> in Browser:
+
 ```
-
+minikube ip
+```
 
 ## Useful commands
 
@@ -87,8 +130,6 @@ kubectl exec -ti deployment/mysql-deployment -- mysql -u root --password=mysecre
 ```
 watch kubectl get all
 ```
-
-### Start the 
 
 # References
 
