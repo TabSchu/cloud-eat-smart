@@ -6,7 +6,7 @@ A web application to find out the correlation between food and GPA. Data for the
 
 ## Architecture
 
-![Architecture](/images/architecture.png?raw=true)
+![Architecture](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/architecture.png?raw=true))
 
 The application runs on a Kubernetes Cluster, in this case minikube/microk8s. Therefore it would be possible to scale the application and react to higher traffic / load by starting more pods of some of the services.
 
@@ -19,7 +19,7 @@ Kafka is the Big Data Messaging service where the website sends its data to. The
 
 ## Workflow
 
-![Architecture](/images/workflow.png?raw=true)
+![Workflow](https://github.com/TabSchu/cloud-eat-smart/blob/develop/documentation/images/workflow.png?raw=true)
 
 As shown in the image above, the user clicks on the link to generate multiple new sets of data. A GET-Request on the /survey route generates one set of data. In a real world scenario this could be the insert of a new survey result, after interviewing a group of students. Multiple institutes could insert / generate data at the same time in different instances of the web application. [index.js & *.html]
 The datasets will be send to Kafka. [spark-app.py:] Spark computes the data in streamed batches of data.
